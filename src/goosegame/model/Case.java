@@ -11,7 +11,7 @@ package goosegame.model;
  */
 public class Case {
     private Player m_player;
-    private final CaseType m_type;
+    private CaseType m_type;
     
     
     public Case()
@@ -39,5 +39,9 @@ public class Case {
     public CaseType type()
     {
         return m_type;
-    }   
+    }
+    public void setType(CaseType type)
+    {
+        m_type = type;
+    }
 }

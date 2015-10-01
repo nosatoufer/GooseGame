@@ -13,6 +13,7 @@ public class Player {
     private final int m_numPlayer;
     private int m_position;
     private int m_lastPosition;
+    private Dices m_dices;
     private int m_stuck;
     private boolean m_jail;
     
@@ -23,6 +24,7 @@ public class Player {
         m_lastPosition = 0;
         m_stuck = 0;
         m_jail = false;
+        m_dices = null;
     }
     
     
@@ -65,6 +67,9 @@ public class Player {
         m_stuck = turns;
     }
     
+    /**
+     * Reduce the turn stuck left.
+     */
     public void decStuck()
     {
         if (m_stuck > 0)
@@ -79,4 +84,17 @@ public class Player {
         m_jail = !m_jail;
     }
     
+    /**
+     * 
+     * @param dices
+     */
+    public void setDices(Dices dices)
+    {
+        m_dices = dices;
+    }
+    
+    public Dices dices()
+    {
+        return m_dices;
+    }
 }
