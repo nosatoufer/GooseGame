@@ -11,20 +11,22 @@ package goosegame.model;
  */
 public class Player {
     private final int m_numPlayer;
+    private final Color m_color;
     private int m_position;
     private int m_lastPosition;
     private Dices m_dices;
     private int m_stuck;
     private boolean m_jail;
     
-    public Player(int num)
+    public Player(int num, Color color)
     {
+        m_color = color;
         m_numPlayer = num;
         m_position = 0;
         m_lastPosition = 0;
         m_stuck = 0;
         m_jail = false;
-        m_dices = null;
+        m_dices = new Dices(0,0);
     }
     
     

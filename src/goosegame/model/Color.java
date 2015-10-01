@@ -9,13 +9,13 @@ package goosegame.model;
  *
  * @author nosa
  */
-public enum CaseType {
-    GOOSE,
-    JAIl,
-    INN,
-    WELL,
-    BRIDGE,
-    MAZE,
-    DEATH,
-    END
+public enum Color {
+    GREEN,
+    PINK,
+    BLUE,
+    YELLOW,
+    PURPLE,
+    RED,
+    BLACK,
+    WHITE
 }
