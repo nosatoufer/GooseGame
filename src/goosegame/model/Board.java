@@ -12,6 +12,7 @@ import java.util.Vector;
 public class Board {
     private Case m_board[];
     private Vector<Player> m_players;
+    private int m_currentPlayer;
     
     public Board(int nPlayers)
     {
@@ -19,5 +20,16 @@ public class Board {
         {
             m_players = new Vector<>();
         }
+    }
+    
+    private void actionInn()
+    {
+        Player curP = m_players.get(m_currentPlayer);
+        Player p = m_board[m_players.get(m_currentPlayer).position()].player();
+        if (p != null)
+        {
+            p.setPosition(curP.lastPosition());
+        }
+        curP.setStuck(2);
     }
 }

@@ -11,7 +11,7 @@ package goosegame.model;
  */
 public class Case {
     private Player m_player;
-    final private CaseType m_type;
+    private final CaseType m_type;
     
     
     public Case()
