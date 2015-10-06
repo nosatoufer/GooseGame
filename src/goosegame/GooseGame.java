@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package goosegame;
+import goosegame.model.Board;
 
 /**
  *
@@ -15,7 +16,8 @@ public class GooseGame {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
+        Board b = new Board(3);
+        b.play();
     }
     
 }

@@ -9,9 +9,11 @@ package goosegame.model;
  *
  * @author nosa
  */
-public enum CaseType {
+public enum CaseType
+{
+    EMPTY,
     GOOSE,
-    JAIl,
+    JAIL,
     INN,
     WELL,
     BRIDGE,

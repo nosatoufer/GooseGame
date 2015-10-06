@@ -14,7 +14,6 @@ public class Player {
     private final Color m_color;
     private int m_position;
     private int m_lastPosition;
-    private Dices m_dices;
     private int m_stuck;
     private boolean m_jail;
     
@@ -26,25 +25,39 @@ public class Player {
         m_lastPosition = 0;
         m_stuck = 0;
         m_jail = false;
-        m_dices = new Dices(0,0);
     }
     
-    
+    /**
+     * Return the current position of the player
+     * @return the current position
+     */
     public int position()
     {
         return m_position;
     }
     
+    /**
+     * Return the last position of the player
+     * @return the last position
+     */
     public int lastPosition()
     {
         return m_lastPosition;
     }
     
+    /**
+     * Return the turns left in the Inn or in the Well
+     * @return the turns left stuck
+     */
     public int isStuck()
     {
         return m_stuck;
     }
     
+    /**
+     * Return if the player is in jail or not
+     * @return True if the player is stuck in jail.
+     */
     public boolean isJailed()
     {
         return m_jail;
@@ -84,19 +97,5 @@ public class Player {
     public void setJail()
     {
         m_jail = !m_jail;
-    }
-    
-    /**
-     * 
-     * @param dices
-     */
-    public void setDices(Dices dices)
-    {
-        m_dices = dices;
-    }
-    
-    public Dices dices()
-    {
-        return m_dices;
     }
 }

@@ -17,7 +17,7 @@ public class Case {
     public Case()
     {
         m_player = null;
-        m_type = null;
+        m_type = CaseType.EMPTY;
     }
     
     public Case(CaseType type)

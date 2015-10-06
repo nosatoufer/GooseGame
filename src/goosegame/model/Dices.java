@@ -5,30 +5,48 @@
  */
 package goosegame.model;
 
+import java.util.ArrayList;
+import java.util.List;
 /**
  *
  * @author nosa
  */
 public class Dices {
-    private int m_one;
-    private int m_two;
+    List<Dice> m_dices;
     
-    public Dices(int one, int two)
+    public Dices(int nDice, int mRoll)
     {
-        m_one = one;
-        m_two = two;
+        m_dices = new ArrayList<>();
+        for ( int i = 0 ; i < nDice ; ++i)
+        {
+            m_dices.add(new Dice(mRoll));
+        }
     }
     
-    public int one()
+    public int diceValue(int index)
     {
-        return m_one;
+        return m_dices.get(index).value();
     }
-    public int two()
+    
+    public int nDices()
     {
-        return m_two;
+        return m_dices.size();
     }
+    
     public int sum()
     {
-        return m_one + m_two;
+        int sum = 0;
+        
+        for( Dice d : m_dices )
+            sum = d.value();
+        
+        return sum;
+    }
+    
+    public void roll()
+    {
+        m_dices.forEach((d) -> {
+            d.roll();
+        });
     }
 }
