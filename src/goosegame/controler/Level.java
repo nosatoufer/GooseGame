@@ -13,7 +13,4 @@ import goosegame.model.Board;
 public class Level {
     
     private Board m_board;
-    
-    
-    
 }

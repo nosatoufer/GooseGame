@@ -45,8 +45,8 @@ public class Dices {
     
     public void roll()
     {
-        m_dices.forEach((d) -> {
-            d.roll();
-        });
+        for (Dice d : m_dices) {
+	    d.roll();
+	}
     }
 }
