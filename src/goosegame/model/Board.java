@@ -28,11 +28,11 @@ public class Board {
         m_players.add(new Player(0, Color.GREEN));
         m_players.add(new Player(1, Color.BLACK));
         m_players.add(new Player(2, Color.BLUE));
-        
+
         for (int i = 0; i < 63; ++i) {
             m_board[i] = new Case();
         }
-        for (int i = 9; i < 63; i += i) {
+        for (int i = 9; i < 61; i += i) {
             m_board[i].setType(CaseType.GOOSE);
         }
         m_board[6].setType(CaseType.BRIDGE);
@@ -46,44 +46,46 @@ public class Board {
 
     /**
      * Manage a turn of the game
+     *
+     * @throws goosegame.model.GooseGameException
      */
-    public void play() {
+    public void play() throws GooseGameException {
         Player p = m_players.get(m_currentPlayer);
         if (p.isJailed() || p.isStuck() != 0) {
             p.decStuck();
         } else {
             m_dices.roll();
-            m_board[p.position()].setPlayer(null);
-            p.setPosition(p.position() + m_dices.sum());
-            Case c = m_board[p.position()];
-            if (c.player() != null) {
-                c.player().setPosition(p.lastPosition());
-            }
-            c.setPlayer(p);
-            boolean goose = false;
+            System.out.println("Dices rolled, values : " + m_dices.sum());
+
+            Case c;
+
+            boolean goose;
             do {
+                c = movePlayer(p, p.position() + m_dices.sum());
+                goose = false;
+                System.out.println("Case action management");
                 switch (c.type()) {
                     case GOOSE:
-                        actionGoose();
+                        actionGoose(p);
                         goose = true;
                         break;
                     case JAIL:
-                        actionJail();
+                        actionJail(p);
                         break;
                     case INN:
-                        actionInnWell(1);
+                        actionInnWell(p, 1);
                         break;
                     case WELL:
-                        actionInnWell(2);
+                        actionInnWell(p, 2);
                         break;
                     case BRIDGE:
-                        actionBridge();
+                        actionBridge(p);
                         break;
                     case MAZE:
-                        actionMaze();
+                        actionMaze(p);
                         break;
                     case DEATH:
-                        actionDeath();
+                        actionDeath(p);
                         break;
                     case END:
                         m_over = true;
@@ -91,6 +93,8 @@ public class Board {
                     case EMPTY:
                         break;
                     default:
+                        throw new GooseGameException("Case with no defined type");
+
                 }
             } while (goose);
         }
@@ -99,52 +103,109 @@ public class Board {
     }
 
     /**
+     * Move the player and manage the swap
+     *
+     * @param p
+     * @param pos
+     * @return
+     */
+    private Case movePlayer(Player p, int pos) {
+        if (pos > 62) {
+            pos = pos - (pos - 62);
+        }
+        m_board[p.position()].setPlayer(null);
+        p.setPosition(pos);
+        System.out.println("Player " + p.numPlayer() + " moved, position : " + p.position());
+        Case c = m_board[p.position()];
+        if (c.player() != null) {
+            if (c.player().isJailed()) {
+                c.player().setJail();
+            }
+            movePlayer(c.player(), p.lastPosition());
+
+        }
+        c.setPlayer(p);
+        return c;
+    }
+
+    /**
      * Manage de action Case or Well
+     *
      * @param turns the amount of turns lost
      */
-    private void actionInnWell(int turns) {
-        Player curP = m_players.get(m_currentPlayer);
-        Player p = m_board[m_players.get(m_currentPlayer).position()].player();
-        if (p != null) {
-            p.setPosition(curP.lastPosition());
-        }
-        curP.setStuck(turns);
+    private void actionInnWell(Player p, int turns) {
+        System.out.println("Vous êtes bloqué pour les " + turns + " tours.");
+        p.setStuck(turns);
     }
 
     /**
      * Manage the Bridge
      */
-    private void actionBridge() {
-        m_players.get(m_currentPlayer).setPosition(12);
+    private void actionBridge(Player p) {
+        System.out.println("Vous prenez le pont et allez directement sur la"
+                + " case 20");
+        movePlayer(p, 20);
     }
 
     /**
      * Manage the Death case
      */
-    private void actionDeath() {
-        m_players.get(m_currentPlayer).setPosition(0);
+    private void actionDeath(Player p) {
+        System.out.println("Vous êtes cuit ! Retournez à la case départ.");
+        movePlayer(p, 0);
     }
 
     /**
      * Manage the Maze case
      */
-    private void actionMaze() {
-        m_players.get(m_currentPlayer).setPosition(30);
+    private void actionMaze(Player p) {
+        System.out.println("Vous êtes entré dans le labyrinthe et "
+                + "resortez à la case 30.");
+        movePlayer(p, 30);
     }
 
     /**
      * Manage the Jail case
      */
-    private void actionJail() {
-        m_players.get(m_currentPlayer).setJail();
+    private void actionJail(Player p) {
+        System.out.println("Vous êtes en prison, vous devez attendre que "
+                + "quelqu'un vous sauve.");
+        p.setJail();
     }
 
     /**
      * Manage Goose case
      */
-    private void actionGoose() {
-        Player p = m_players.get(m_currentPlayer);
-        p.setPosition(m_dices.sum() + p.position());
+    private void actionGoose(Player p) {
+        System.out.println("Vous êtes tombé sur une oie.");
+        //movePlayer(p, p.position() + m_dices.sum());
+    }
+
+    /**
+     * Return true if the game is over
+     *
+     * @return true if one playser has reach the last case.
+     */
+    public boolean isOver() {
+        return m_board[62].player() != null;
+    }
+
+    public String toString() {
+        String s = "";
+        for (int i = 0; i < 63; ++i) {
+            s += " ";
+            if (m_board[i].player() != null) {
+                s += m_board[i].player().toString();
+            } else {
+                s += "   ";
+            }
+            s += " ";
+        }
+        s += '\n';
+        for (int i = 0; i < 63; ++i) {
+            s += m_board[i].toString();
+        }
+        return s;
     }
 
 }

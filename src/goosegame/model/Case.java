@@ -44,4 +44,43 @@ public class Case {
     {
         m_type = type;
     }
+    
+    public String toString()
+    {
+        String s = "[";
+        switch (m_type)
+        {
+            case BRIDGE:
+                s += "BRI";
+                break;
+            case DEATH:
+                s += "DEA";
+                break;
+            case EMPTY:
+                s += "EMP";
+                break;
+            case END:
+                s += "END";
+                break;
+            case GOOSE:
+                s += "GOO";
+                break;
+            case INN:
+                s += "INN";
+                break;
+            case JAIL:
+                s += "JAI";
+                break;
+            case MAZE:
+                s += "MAZ";
+                break;
+            case WELL:
+                s += "WEL";
+                break;
+            default:
+                s += "   ";
+        }
+        s += "]";
+        return s;
+    }
 }

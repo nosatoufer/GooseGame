@@ -98,4 +98,44 @@ public class Player {
     {
         m_jail = !m_jail;
     }
+    
+    public int numPlayer()
+    {
+        return m_numPlayer;
+    }
+    
+    public String toString()
+    {
+        String s;
+        switch (m_color)
+        {
+            case GREEN:
+                s = "GRE";
+                break;
+            case PINK:
+                s = "PIN";
+                break;
+            case BLUE:
+                s = "BLU";
+                break;
+            case YELLOW:
+                s = "YEL";
+                break;
+            case PURPLE:
+                s = "PUR";
+                break;
+            case RED:
+                s = "RED";
+                break;
+            case BLACK:
+                s = "BLA";
+                break;
+            case WHITE:
+                s = "WHI";
+                break;
+            default:
+                s = "";
+        }
+        return s;
+    }
 }
