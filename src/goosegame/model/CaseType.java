@@ -11,6 +11,7 @@ package goosegame.model;
  */
 public enum CaseType
 {
+    START,
     EMPTY,
     GOOSE,
     JAIL,
@@ -19,5 +20,8 @@ public enum CaseType
     BRIDGE,
     MAZE,
     DEATH,
-    END
+    END;
+    
+    @Override
+    public String toString() { return this.name().substring(0, 3); }
 }

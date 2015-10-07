@@ -17,5 +17,9 @@ public enum Color {
     PURPLE,
     RED,
     BLACK,
-    WHITE
+    WHITE;
+    
+    @Override
+    public String toString() { return this.name().substring(0, 3); }
 }
+

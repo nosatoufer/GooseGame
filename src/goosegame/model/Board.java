@@ -117,14 +117,16 @@ public class Board {
         p.setPosition(pos);
         System.out.println("Player " + p.numPlayer() + " moved, position : " + p.position());
         Case c = m_board[p.position()];
-        if (c.player() != null) {
-            if (c.player().isJailed()) {
-                c.player().setJail();
-            }
-            movePlayer(c.player(), p.lastPosition());
+        if (pos != 0) {
+            if (c.player() != null) {
+                if (c.player().isJailed()) {
+                    c.player().setJail();
+                }
+                movePlayer(c.player(), p.lastPosition());
 
+            }
+            c.setPlayer(p);
         }
-        c.setPlayer(p);
         return c;
     }
 
