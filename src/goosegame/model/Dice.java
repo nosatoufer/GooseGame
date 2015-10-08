@@ -1,33 +1,35 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package goosegame.model;
 
 import java.util.Random;
 
 /**
- *
+ * Represent a dice
  * @author nosa
  */
 public class Dice {
     private int m_value;
-    private final int m_mRoll;
+    private final int m_maxValue;
     private final Random m_rand;
     
-    public Dice(int mRoll)
+    public Dice(int maxValue)
     {
         m_rand = new Random();
         m_value = 0;
-        m_mRoll = mRoll - 1;
+        m_maxValue = maxValue;
     }
     
+    /**
+     * Roll the dice
+     */
     public void roll()
     {
-        m_value = m_rand.nextInt(m_mRoll) + 1;
+        m_value = m_rand.nextInt(m_maxValue - 1) + 1;
     }
     
+    /**
+     * Return the value of the dice
+     * @return the value of the dice
+     */
     public int value()
     {
         return m_value;

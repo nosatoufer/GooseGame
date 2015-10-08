@@ -1,14 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package goosegame.model;
 
 import java.util.ArrayList;
 import java.util.List;
 /**
- *
+ * The object containing all the dices
  * @author nosa
  */
 public class Dices {
@@ -23,16 +18,29 @@ public class Dices {
         }
     }
     
+    /**
+     * Return the value of the dice number given in param.
+     * @param index the number of the dice
+     * @return the value of the dice
+     */
     public int diceValue(int index)
     {
         return m_dices.get(index).value();
     }
     
+    /**
+     * Return the amout of dice
+     * @return the amout of dice
+     */
     public int nDices()
     {
         return m_dices.size();
     }
     
+    /**
+     * Return the sum of all dices
+     * @return the sum of all dices
+     */
     public int sum()
     {
         int sum = 0;
@@ -43,6 +51,9 @@ public class Dices {
         return sum;
     }
     
+    /**
+     * Roll all the dices
+     */
     public void roll()
     {
         for (Dice d : m_dices) {

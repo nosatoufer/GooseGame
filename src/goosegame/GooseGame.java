@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package goosegame;
 
 import goosegame.model.Board;
@@ -27,10 +22,8 @@ public class GooseGame {
                 b.play();
                 System.out.println(b.toString());
                 Thread.sleep(1000);
-            } catch (GooseGameException gge) {
+            } catch (GooseGameException | InterruptedException gge) {
                 System.out.println(gge.toString());
-            } catch (InterruptedException e) {
-
             }
         }
     }

@@ -1,14 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package goosegame.model;
 
 import java.util.Vector;
 
 /**
- *
+ * Represent the whole board with cases, player, dices.
  * @author nosa
  */
 public class Board {
@@ -192,6 +187,10 @@ public class Board {
         return m_board[62].player() != null;
     }
 
+    /**
+     * Return a string displaying the board.
+     * @return the board as a string
+     */
     public String toString() {
         String s = "";
         for (int i = 0; i < 63; ++i) {
