@@ -2,6 +2,8 @@ package goosegame;
 
 import goosegame.model.Board;
 import goosegame.model.GooseGameException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -14,17 +16,21 @@ public class GooseGame {
      */
     public static void main(String[] args) {
 
-        Board b = new Board(3);
-        int i = 0;
-
-        while (!b.isOver()) {
-            try {
-                b.play();
-                System.out.println(b.toString());
-                Thread.sleep(1000);
-            } catch (GooseGameException | InterruptedException gge) {
-                System.out.println(gge.toString());
+        try {
+            Board b = new Board(3); // Construit un nouveau plateau avec 3 joueurs
+            int i = 0;
+            
+            while (!b.isOver()) { // Tant que la partie n'est pas finie
+                try {
+                    b.play();
+                    System.out.println(b.toString());
+                    Thread.sleep(1000);
+                } catch (GooseGameException | InterruptedException gge) {
+                    System.out.println(gge.toString());
+                }
             }
+        } catch (GooseGameException ex) {
+            Logger.getLogger(GooseGame.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

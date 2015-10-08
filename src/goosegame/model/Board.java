@@ -11,19 +11,36 @@ public class Board {
     private final Case m_board[] = new Case[63];
     private Vector<Player> m_players;
     private int m_currentPlayer;
-    private boolean m_over;
     private final Dices m_dices;
 
-    public Board(int nPlayers) {
-        m_over = false;
-        m_dices = new Dices(2, 6);
+    public Board(int nPlayers) throws GooseGameException {
+        if (nPlayers < 1 | nPlayers > 8) {
+            throw new GooseGameException("Invalid number of players");
+        }
+        
+        m_dices = new Dices(2, 6); // On joue avec 2 dés à 6 faces
         m_currentPlayer = 0;
         m_players = new Vector<>();
 
-        m_players.add(new Player(0, Color.GREEN));
-        m_players.add(new Player(1, Color.BLACK));
-        m_players.add(new Player(2, Color.BLUE));
-
+        for (int i=0; i<nPlayers; ++i) {
+            if (i == 0) {
+                m_players.add(new Player(i, Color.GREEN));
+            } else if (i == 1) {
+                m_players.add(new Player(i, Color.PINK));
+            } else if (i == 2) {
+                m_players.add(new Player(i, Color.BLUE));
+            } else if (i == 3) {
+                m_players.add(new Player(i, Color.YELLOW));
+            } else if (i == 4) {
+                m_players.add(new Player(i, Color.PURPLE));
+            } else if (i == 5) {
+                m_players.add(new Player(i, Color.RED));
+            } else if (i == 6) {
+                m_players.add(new Player(i, Color.BLACK));
+            } else if (i == 7) {
+                m_players.add(new Player(i, Color.WHITE));
+            }
+        }
         for (int i = 0; i < 63; ++i) {
             m_board[i] = new Case();
         }
@@ -36,7 +53,6 @@ public class Board {
         m_board[42].setType(CaseType.MAZE);
         m_board[52].setType(CaseType.JAIL);
         m_board[58].setType(CaseType.DEATH);
-
     }
 
     /**
@@ -83,7 +99,6 @@ public class Board {
                         actionDeath(p);
                         break;
                     case END:
-                        m_over = true;
                         break;
                     case EMPTY:
                         break;
@@ -181,7 +196,7 @@ public class Board {
     /**
      * Return true if the game is over
      *
-     * @return true if one playser has reach the last case.
+     * @return true if one player has reach the last case.
      */
     public boolean isOver() {
         return m_board[62].player() != null;
@@ -208,5 +223,4 @@ public class Board {
         }
         return s;
     }
-
 }
