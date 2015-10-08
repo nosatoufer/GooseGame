@@ -4,44 +4,59 @@ import java.util.Vector;
 
 /**
  * Represent the whole board with cases, player, dices.
+ *
  * @author nosa
  */
 public class Board {
 
-    private final Case m_board[] = new Case[63];
+    private final Case m_board[] = new Case[64];
     private Vector<Player> m_players;
     private int m_currentPlayer;
     private final Dices m_dices;
 
     public Board(int nPlayers) throws GooseGameException {
-        if (nPlayers < 1 | nPlayers > 8) {
+        if (nPlayers < 1 || nPlayers > 8) {
             throw new GooseGameException("Invalid number of players");
         }
-        
+
         m_dices = new Dices(2, 6); // On joue avec 2 dés à 6 faces
         m_currentPlayer = 0;
         m_players = new Vector<>();
 
-        for (int i=0; i<nPlayers; ++i) {
-            if (i == 0) {
-                m_players.add(new Player(i, Color.GREEN));
-            } else if (i == 1) {
-                m_players.add(new Player(i, Color.PINK));
-            } else if (i == 2) {
-                m_players.add(new Player(i, Color.BLUE));
-            } else if (i == 3) {
-                m_players.add(new Player(i, Color.YELLOW));
-            } else if (i == 4) {
-                m_players.add(new Player(i, Color.PURPLE));
-            } else if (i == 5) {
-                m_players.add(new Player(i, Color.RED));
-            } else if (i == 6) {
-                m_players.add(new Player(i, Color.BLACK));
-            } else if (i == 7) {
-                m_players.add(new Player(i, Color.WHITE));
+        for (int i = 0; i < nPlayers; ++i) {
+            switch (i) {
+                case 0:
+                    m_players.add(new Player(i, Color.GREEN));
+
+                    break;
+                case 1:
+                    m_players.add(new Player(i, Color.PINK));
+
+                    break;
+                case 2:
+                    m_players.add(new Player(i, Color.BLUE));
+
+                    break;
+                case 3:
+                    m_players.add(new Player(i, Color.YELLOW));
+                    break;
+                case 4:
+                    m_players.add(new Player(i, Color.PURPLE));
+                    break;
+                case 5:
+                    m_players.add(new Player(i, Color.RED));
+
+                    break;
+                case 6:
+                    m_players.add(new Player(i, Color.BLACK));
+                    break;
+                case 7:
+                    m_players.add(new Player(i, Color.WHITE));
+                    break;
             }
         }
-        for (int i = 0; i < 63; ++i) {
+
+        for (int i = 0; i < 64; ++i) {
             m_board[i] = new Case();
         }
         for (int i = 9; i < 61; i += i) {
@@ -63,18 +78,15 @@ public class Board {
     public void play() throws GooseGameException {
         Player p = m_players.get(m_currentPlayer);
         if (p.isJailed() || p.isStuck() != 0) {
+            System.out.println("Player " + p.numPlayer() + " is stuck.");
             p.decStuck();
         } else {
-            m_dices.roll();
-            System.out.println("Dices rolled, values : " + m_dices.sum());
-
             Case c;
 
             boolean goose;
             do {
                 c = movePlayer(p, p.position() + m_dices.sum());
                 goose = false;
-                System.out.println("Case action management");
                 switch (c.type()) {
                     case GOOSE:
                         actionGoose(p);
@@ -113,16 +125,39 @@ public class Board {
     }
 
     /**
+     * Roll the dice on the board
+     *
+     * @return the sum of the dices
+     */
+    public int rollDices() {
+        m_dices.roll();
+        return m_dices.sum();
+    }
+
+    /**
      * Move the player and manage the swap
      *
-     * @param p
-     * @param pos
-     * @return
+     * @param p the player to move
+     * @param pos the position to give to the player
+     * @return the case where the player landed
      */
     private Case movePlayer(Player p, int pos) {
         if (pos > 62) {
             pos = pos - (pos - 62);
         }
+        if (m_dices.diceValue(0) == 6 || m_dices.diceValue(1) == 6) {
+            if (m_dices.diceValue(1) == 3 || m_dices.diceValue(0) == 3) {
+                System.out.println("You rolled 6 and 3.");
+                pos = 26;
+            }
+        }
+        if (m_dices.diceValue(0) == 4 || m_dices.diceValue(1) == 4) {
+            if (m_dices.diceValue(1) == 5 || m_dices.diceValue(0) == 5) {
+                System.out.println("You rolled 5 and 4.");
+                pos = 53;
+            }
+        }
+
         m_board[p.position()].setPlayer(null);
         p.setPosition(pos);
         System.out.println("Player " + p.numPlayer() + " moved, position : " + p.position());
@@ -199,16 +234,17 @@ public class Board {
      * @return true if one player has reach the last case.
      */
     public boolean isOver() {
-        return m_board[62].player() != null;
+        return m_board[63].player() != null;
     }
 
     /**
      * Return a string displaying the board.
+     *
      * @return the board as a string
      */
     public String toString() {
         String s = "";
-        for (int i = 0; i < 63; ++i) {
+        for (int i = 1; i < 64; ++i) {
             s += " ";
             if (m_board[i].player() != null) {
                 s += m_board[i].player().toString();
@@ -218,7 +254,7 @@ public class Board {
             s += " ";
         }
         s += '\n';
-        for (int i = 0; i < 63; ++i) {
+        for (int i = 1; i < 64; ++i) {
             s += m_board[i].toString();
         }
         return s;

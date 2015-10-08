@@ -22,6 +22,7 @@ public class GooseGame {
             
             while (!b.isOver()) { // Tant que la partie n'est pas finie
                 try {
+                    b.rollDices();
                     b.play();
                     System.out.println(b.toString());
                     Thread.sleep(1000);

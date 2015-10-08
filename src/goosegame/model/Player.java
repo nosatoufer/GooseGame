@@ -84,6 +84,7 @@ public class Player {
     {
         if (m_stuck > 0)
             --m_stuck;
+        
     }
     
     /**
