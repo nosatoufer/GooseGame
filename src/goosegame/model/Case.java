@@ -3,18 +3,18 @@ package goosegame.model;
 /**
  * Represent a case on the board
  * @author nosa
- */
-public class Case {
+    */
+   public class Case {
 
-    private Player m_player;
-    private CaseType m_type;
+       private Player m_player;
+       private CaseType m_type;
 
-    public Case() {
-        m_player = null;
-        m_type = CaseType.EMPTY;
-    }
+       public Case() {
+           m_player = null;
+           m_type = CaseType.EMPTY;
+       }
 
-    public Case(CaseType type) {
+       public Case(CaseType type) {
         m_player = null;
         m_type = type;
     }
@@ -55,6 +55,7 @@ public class Case {
      * Return a string to display a case
      * @return the string to display the case
      */
+    @Override
     public String toString() {
         String s = "[" +m_type.toString()+"]";
         return s;

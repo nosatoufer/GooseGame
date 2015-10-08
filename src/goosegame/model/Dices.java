@@ -46,7 +46,7 @@ public class Dices {
         int sum = 0;
         
         for( Dice d : m_dices )
-            sum = d.value();
+            sum += d.value();
         
         return sum;
     }
