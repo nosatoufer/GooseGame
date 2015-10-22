@@ -2,25 +2,37 @@ package goosegame.model;
 
 /**
  * Represent a case on the board
+ *
  * @author nosa
-    */
-   public class Case {
+ */
+public class Case {
 
-       private Player m_player;
-       private CaseType m_type;
+    private Player m_player;
+    private CaseType m_type;
 
-       public Case() {
-           m_player = null;
-           m_type = CaseType.EMPTY;
-       }
+    public Case() {
+        m_player = null;
+        m_type = CaseType.EMPTY;
+    }
 
-       public Case(CaseType type) {
+    public Case(CaseType type) {
         m_player = null;
         m_type = type;
+    }
+    
+    /**
+     * Copy constructor
+     * @param c the case to copy
+     */
+    public Case(Case c)
+    {
+        m_player = c.m_player;
+        m_type = c.m_type;
     }
 
     /**
      * Set the player contained by the case.
+     *
      * @param p the player to set in the case
      */
     public void setPlayer(Player p) {
@@ -29,7 +41,8 @@ package goosegame.model;
 
     /**
      * Return the player contained by the case.
-     * @return 
+     *
+     * @return
      */
     public Player player() {
         return m_player;
@@ -37,6 +50,7 @@ package goosegame.model;
 
     /**
      * Return the type of the case.
+     *
      * @return the type of the case
      */
     public CaseType type() {
@@ -45,6 +59,7 @@ package goosegame.model;
 
     /**
      * Set the type of the case
+     *
      * @param type the new type
      */
     public void setType(CaseType type) {
@@ -53,11 +68,12 @@ package goosegame.model;
 
     /**
      * Return a string to display a case
+     *
      * @return the string to display the case
      */
     @Override
     public String toString() {
-        String s = "[" +m_type.toString()+"]";
+        String s = "[" + m_type.toString() + "]";
         return s;
     }
 }
