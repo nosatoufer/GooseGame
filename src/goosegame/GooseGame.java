@@ -1,11 +1,7 @@
 package goosegame;
 
-import goosegame.controler.Controler;
-import goosegame.model.Color;
-import goosegame.model.GooseGameException;
-import static java.lang.Thread.sleep;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javafx.application.Application;
+import goosegame.view.Window;
 
 /**
  * Test
@@ -17,6 +13,7 @@ public class GooseGame {
     /**
      * @param args the command line arguments
      */
+    /*
     public static void main(String[] args) {
         System.out.println("Hellow goose.");
         Controler ctrl = new Controler();
@@ -35,6 +32,11 @@ public class GooseGame {
             System.out.println(e.getMessage());
         }
 
+    }
+    */
+    
+    public static void main(String[] args) {
+        Application.launch(Window.class, args);
     }
 
 }

@@ -21,9 +21,8 @@ public class BoardTest {
 
     @Test
     public void testPlay() throws GooseGameException {
-        Board board = new Board(3);
-        board.play();
-
+        Board board = new Board();
+        //board.play();
     }
 
 }
