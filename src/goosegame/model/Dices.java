@@ -7,7 +7,7 @@ import java.util.List;
  * @author nosa
  */
 public class Dices {
-    List<Dice> m_dices;
+    private List<Dice> m_dices;
     
     public Dices(int nDice, int mRoll)
     {

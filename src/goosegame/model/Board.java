@@ -1,7 +1,5 @@
 package goosegame.model;
 
-import java.util.Vector;
-
 /**
  * Represent the whole board with cases, player, dices.
  *
@@ -27,14 +25,25 @@ public class Board {
     }
     
     /**
+     * Removes the player contained at the given position
+     * @param index the position on the board
+     */
+    public void clearCase(int index)
+    {
+        m_board[index].setPlayer(null);
+    }
+    
+    /**
      * Returns a copy of the case at the given position
      * @param index the position of the case
      * @return a copy of the case
      */
     public Case getCase(int index)
     {
-        return new Case(m_board[index]);
+        System.out.println("index : "+index);
+        return m_board[index];
     }
+    
     /**
      * Return a string displaying the board.
      *

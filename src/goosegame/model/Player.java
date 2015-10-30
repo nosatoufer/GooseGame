@@ -103,7 +103,12 @@ public class Player {
     {
         return m_numPlayer;
     }
+    public Color color()
+    {
+        return m_color;
+    }
     
+    @Override
     public String toString()
     {
         String s = m_color.toString();
