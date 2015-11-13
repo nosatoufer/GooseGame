@@ -1,8 +1,6 @@
 package goosegame.view;
 
 import goosegame.controler.Controler;
-import goosegame.model.Game;
-import goosegame.model.GameState;
 import goosegame.model.GooseGameException;
 import goosegame.model.PlayerColor;
 
@@ -29,7 +27,6 @@ import javafx.util.Pair;
 public class MainWindow extends Parent implements View {
     
     private final Controler controler;
-    private final Game game;
     
     private Button throwDicesButton;
     private Button playButton;
@@ -42,11 +39,7 @@ public class MainWindow extends Parent implements View {
     
     private final Stage mainStage;
     
-    public MainWindow(Controler controler, Game game) {
-        
-        // Création du model : le jeu
-        this.game = game;
-        
+    public MainWindow(Controler controler) {
         // Création du controler avec attachement du modèle (pour que le controler puisse agir sur le model)
         this.controler = controler;
         
@@ -94,7 +87,7 @@ public class MainWindow extends Parent implements View {
                     // On fait jouer le joueur
                     controler.play();
                     
-                    if (game.getGameState() == GameState.OVER) {
+                    if (controler.isGameOver()) {
                         throwDicesButton.setDisable(true);
                     } else {
                         throwDicesButton.setDisable(false);
@@ -116,7 +109,7 @@ public class MainWindow extends Parent implements View {
         playerText = new Text("");
         playerText.setFont(new Font(15));
         
-        board = new BoardView(game.getBoard());
+        board = new BoardView(controler.getSpecialCases());
         
         gridpane = new GridPane();
         gridpane.setVgap(4);
@@ -140,23 +133,23 @@ public class MainWindow extends Parent implements View {
         // Méthode de mise à jour de l'interface graphique, appelée par le modèle lors d'un changement
 
         // On met à jour la position des joueurs sur le plateau
-        ArrayList<Pair<PlayerColor,Integer>> players = game.getPlayerPos();
+        ArrayList<Pair<PlayerColor,Integer>> players = controler.getPlayerPos();
         for (Pair<PlayerColor, Integer> player : players) {
             board.updatePlayer(player.getKey(), player.getValue());
         }
         
         // Si le jeu n'est pas encore fini :
-        if (game.getGameState() == GameState.STARTED) {        
+        if (controler.isGameStarted()) {        
             // On affiche le résultat des dés
-            dicesSumText.setText(Integer.toString(game.getDicesSum()));
+            dicesSumText.setText(Integer.toString(controler.getDicesSum()));
 
             // On affiche le joueur suivant
-            playerText.setText("Joueur suivant : "+game.getCurrentPlayerColor());
+            playerText.setText("Joueur suivant : "+controler.getCurrentPlayerColor());
 
         // Si le jeu est fini :
-        } else if (game.getGameState() == GameState.OVER) {
+        } else if (controler.isGameOver()) {
             // On affiche le joueur gagnant
-            playerText.setText("Joueur gagnant : "+game.getCurrentPlayerColor());
+            playerText.setText("Joueur gagnant : "+controler.getCurrentPlayerColor());
             
             // On le notifie par un message
             Alert alert = new Alert(Alert.AlertType.INFORMATION);

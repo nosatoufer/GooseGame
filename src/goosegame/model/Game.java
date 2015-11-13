@@ -31,8 +31,8 @@ public class Game {
         dicesRolled = false;
     }
 
-    public Board getBoard() {
-        return this.board;
+    public ArrayList<Pair<Integer, CaseType>> getSpecialCases() {
+        return this.board.getSpecialCases();
     }
     
     public void addPlayer(PlayerColor col) throws GooseGameException {

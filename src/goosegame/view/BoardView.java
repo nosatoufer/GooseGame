@@ -1,11 +1,13 @@
 package goosegame.view;
 
-import goosegame.model.Board;
+import goosegame.model.CaseType;
 import goosegame.model.PlayerColor;
+import java.util.ArrayList;
 
 import javafx.scene.Parent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.util.Pair;
 
 /**
  *
@@ -17,7 +19,7 @@ public class BoardView extends Parent {
     
     private final Rectangle fond;
     
-    public BoardView(Board board) {
+    public BoardView(ArrayList<Pair<Integer, CaseType>> specialCases) {
         // Création et ajout de la couleur de fond du plateau
         fond = new Rectangle();
         fond.setWidth(835);
@@ -32,8 +34,12 @@ public class BoardView extends Parent {
         
         // Création des cases du plateau grâce au plateau modèle
         for (int i=0; i<64; ++i) {
-            cases[i] = new CaseView(i, board.getCase(i).type(), 80*(i%10)+20, 80*(i/10)+20);
+            cases[i] = new CaseView(i, 80*(i%10)+20, 80*(i/10)+20);
             this.getChildren().add(cases[i]);
+        }
+        // Ajout des cases spéciales sur le plateau graphique
+        for (int i=0; i<specialCases.size(); ++i) {
+            cases[specialCases.get(i).getKey()].setType(specialCases.get(i).getValue());
         }
     }
     

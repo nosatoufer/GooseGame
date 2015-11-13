@@ -28,7 +28,7 @@ public class GooseGame extends Application {
         Controler controler = new Controler(game);
         
         // Création de la vue avec attachement du controler (pour envoyer les interactions de l'utilisateur)
-        MainWindow mw = new MainWindow(controler, game);
+        MainWindow mw = new MainWindow(controler);
         
         // Attachement de la vue au modèle (pour la mettre à jour lors du changement du modèle)
         game.attachView(mw);

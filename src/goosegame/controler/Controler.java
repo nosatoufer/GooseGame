@@ -1,8 +1,12 @@
 package goosegame.controler;
 
+import goosegame.model.CaseType;
 import goosegame.model.Game;
+import goosegame.model.GameState;
 import goosegame.model.PlayerColor;
 import goosegame.model.GooseGameException;
+import java.util.ArrayList;
+import javafx.util.Pair;
 
 /**
  *
@@ -33,4 +37,27 @@ public class Controler {
         this.game.start();
     }
     
+    public ArrayList<Pair<PlayerColor, Integer>> getPlayerPos() {
+        return this.game.getPlayerPos();
+    }
+    
+    public boolean isGameStarted() {
+        return (this.game.getGameState() == GameState.STARTED);
+    }
+    
+    public boolean isGameOver() {
+        return (game.getGameState() == GameState.OVER);
+    }
+    
+    public int getDicesSum() {
+        return game.getDicesSum();
+    }
+    
+    public PlayerColor getCurrentPlayerColor() {
+        return game.getCurrentPlayerColor();
+    }
+    
+    public ArrayList<Pair<Integer, CaseType>> getSpecialCases() {
+        return game.getSpecialCases();
+    }
 }

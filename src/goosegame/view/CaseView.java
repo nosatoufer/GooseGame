@@ -27,7 +27,7 @@ public class CaseView extends Parent {
     
     private PlayerColor playerColor; // Couleur du joueur présent sur la 
     
-    public CaseView(int pos, CaseType type, int x, int y) {
+    public CaseView(int pos, int x, int y) {
         this.x = x;
         this.y = y;
         this.playerColor = null;
@@ -46,6 +46,26 @@ public class CaseView extends Parent {
         
         // Ajout du type de la case sur cette dernière
         caseTypeText = new Text("");
+        caseTypeText.setFont(new Font(15));
+        caseTypeText.setFill(Color.GREY);
+        caseTypeText.setX(10);
+        caseTypeText.setY(35);
+        this.getChildren().add(caseTypeText);
+        
+        // Création et ajout du numéro de la case sur cette dernière
+        posText = new Text(Integer.toString(pos));
+        posText.setFont(new Font(15));
+        posText.setFill(Color.GREY);
+        posText.setX(10);
+        posText.setY(20);
+        this.getChildren().add(posText);
+        
+        // Positionnement de la case sur le plateau
+        this.setTranslateX(this.x);
+        this.setTranslateY(this.y);
+    }
+    
+    public void setType(CaseType type) {
         switch (type) {
             case GOOSE:
                 caseTypeText.setText("Goose");
@@ -68,24 +88,13 @@ public class CaseView extends Parent {
             case DEATH:
                 caseTypeText.setText("Death");
             break;
+            case START:
+                caseTypeText.setText("Start");
+            break;
+            case END:
+                caseTypeText.setText("End");
+            break;
         }
-        caseTypeText.setFont(new Font(15));
-        caseTypeText.setFill(Color.GREY);
-        caseTypeText.setX(10);
-        caseTypeText.setY(35);
-        this.getChildren().add(caseTypeText);
-        
-        // Création et ajout du numéro de la case sur cette dernière
-        posText = new Text(Integer.toString(pos));
-        posText.setFont(new Font(15));
-        posText.setFill(Color.GREY);
-        posText.setX(10);
-        posText.setY(20);
-        this.getChildren().add(posText);
-        
-        // Positionnement de la case sur le plateau
-        this.setTranslateX(this.x);
-        this.setTranslateY(this.y);
     }
     
     public void setPlayer(PlayerColor color) {

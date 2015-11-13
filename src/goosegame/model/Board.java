@@ -1,5 +1,9 @@
 package goosegame.model;
 
+import java.util.ArrayList;
+
+import javafx.util.Pair;
+
 /**
  * Represent the whole board with cases, player, dices.
  *
@@ -33,6 +37,20 @@ public class Board {
     public void clearCase(int index)
     {
         this.board[index].setPlayer(null);
+    }
+    
+    /**
+     * Return a list of special cases
+     * @return Liste des cases spéciales et de leur index
+     */
+    public ArrayList<Pair<Integer, CaseType>> getSpecialCases() {
+        ArrayList<Pair<Integer, CaseType>> cases = new ArrayList<>();
+        for (int i = 0; i < 64; ++i) {
+            if (this.board[i].type() != CaseType.EMPTY) {
+                cases.add(new Pair<>(i, this.board[i].type()));
+            }
+        }
+        return cases;
     }
     
     /**
