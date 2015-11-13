@@ -1,11 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package goosegame.controler;
+
 import goosegame.model.Game;
-import goosegame.model.Color;
+import goosegame.model.PlayerColor;
 import goosegame.model.GooseGameException;
 
 /**
@@ -14,30 +10,27 @@ import goosegame.model.GooseGameException;
  */
 public class Controler {
     
-    private Game m_game;
+    private final Game game;
     
-    public Controler ()
+    public Controler (Game game)
     {
-        m_game = new Game();
+        this.game = game;
     }
-    
-    public void newPlayer(Color c) throws GooseGameException
+    public void newPlayer(PlayerColor c) throws GooseGameException
     {
-        m_game.addPlayer(c);
+        this.game.addPlayer(c);
     }
-
     public void play() throws GooseGameException
     {
-        m_game.play();
+        this.game.play();
     }    
     public void rollDice() throws GooseGameException
     {
-        m_game.rollDices();
+        this.game.rollDices();
     }
-    
-    public void startGame()
+    public void startGame() throws GooseGameException
     {
-        m_game.start();
+        this.game.start();
     }
     
 }

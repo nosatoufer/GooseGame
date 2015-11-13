@@ -2,24 +2,25 @@ package goosegame.model;
 
 /**
  * Represent the player with his color, number, position et status.
+ * 
  * @author nosa
  */
 public class Player {
-    private final int m_numPlayer;
-    private final Color m_color;
-    private int m_position;
-    private int m_lastPosition;
-    private int m_stuck;
-    private boolean m_jail;
+    private final int numPlayer;
+    private final PlayerColor color;
+    private int position;
+    private int lastPosition;
+    private int stuck;
+    private boolean jail;
     
-    public Player(int num, Color color)
+    public Player(int num, PlayerColor color)
     {
-        m_color = color;
-        m_numPlayer = num;
-        m_position = 0;
-        m_lastPosition = 0;
-        m_stuck = 0;
-        m_jail = false;
+        this.color = color;
+        this.numPlayer = num;
+        this.position = 0;
+        this.lastPosition = 0;
+        this.stuck = 0;
+        this.jail = false;
     }
     
     /**
@@ -28,7 +29,7 @@ public class Player {
      */
     public int position()
     {
-        return m_position;
+        return this.position;
     }
     
     /**
@@ -37,7 +38,7 @@ public class Player {
      */
     public int lastPosition()
     {
-        return m_lastPosition;
+        return this.lastPosition;
     }
     
     /**
@@ -46,7 +47,7 @@ public class Player {
      */
     public int isStuck()
     {
-        return m_stuck;
+        return this.stuck;
     }
     
     /**
@@ -55,7 +56,7 @@ public class Player {
      */
     public boolean isJailed()
     {
-        return m_jail;
+        return this.jail;
     }
     
     /**
@@ -64,8 +65,8 @@ public class Player {
      */
     public void setPosition(int pos)
     {
-        m_lastPosition = m_position;
-        m_position = pos;
+        this.lastPosition = this.position;
+        this.position = pos;
     }
     
     /**
@@ -74,7 +75,7 @@ public class Player {
      */
     public void setStuck(int turns)
     {
-        m_stuck = turns;
+        this.stuck = turns;
     }
     
     /**
@@ -82,8 +83,8 @@ public class Player {
      */
     public void decStuck()
     {
-        if (m_stuck > 0)
-            --m_stuck;
+        if (this.stuck > 0)
+            --this.stuck;
         
     }
     
@@ -92,7 +93,7 @@ public class Player {
      */
     public void setJail()
     {
-        m_jail = !m_jail;
+        this.jail = !this.jail;
     }
     
     /**
@@ -101,17 +102,17 @@ public class Player {
      */
     public int numPlayer()
     {
-        return m_numPlayer;
+        return this.numPlayer;
     }
-    public Color color()
+    public PlayerColor color()
     {
-        return m_color;
+        return this.color;
     }
     
     @Override
     public String toString()
     {
-        String s = m_color.toString();
+        String s = this.color.toString();
         return s;
     }
 }

@@ -7,17 +7,17 @@ package goosegame.model;
  */
 public class Case {
 
-    private Player m_player;
-    private CaseType m_type;
+    private Player player;
+    private CaseType type;
 
     public Case() {
-        m_player = null;
-        m_type = CaseType.EMPTY;
+        this.player = null;
+        this.type = CaseType.EMPTY;
     }
 
     public Case(CaseType type) {
-        m_player = null;
-        m_type = type;
+        this.player = null;
+        this.type = type;
     }
     
     /**
@@ -26,8 +26,8 @@ public class Case {
      */
     public Case(Case c)
     {
-        m_player = c.m_player;
-        m_type = c.m_type;
+        this.player = c.player;
+        this.type = c.type;
     }
 
     /**
@@ -36,7 +36,7 @@ public class Case {
      * @param p the player to set in the case
      */
     public void setPlayer(Player p) {
-        m_player = p;
+        this.player = p;
     }
 
     /**
@@ -45,7 +45,7 @@ public class Case {
      * @return
      */
     public Player player() {
-        return m_player;
+        return player;
     }
 
     /**
@@ -54,7 +54,7 @@ public class Case {
      * @return the type of the case
      */
     public CaseType type() {
-        return m_type;
+        return type;
     }
 
     /**
@@ -63,7 +63,7 @@ public class Case {
      * @param type the new type
      */
     public void setType(CaseType type) {
-        m_type = type;
+        this.type = type;
     }
 
     /**
@@ -73,7 +73,7 @@ public class Case {
      */
     @Override
     public String toString() {
-        String s = "[" + m_type.toString() + "]";
+        String s = "[" + type.toString() + "]";
         return s;
     }
 }

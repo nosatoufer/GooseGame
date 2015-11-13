@@ -7,7 +7,6 @@ package goosegame.model;
 
 import org.junit.Assert;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
@@ -21,7 +20,7 @@ public class CaseTest {
     @Test
     public void testSetPlayer() {
         Case cas = new Case(CaseType.DEATH);
-        Player player = new Player(2, Color.BLUE);
+        Player player = new Player(2, PlayerColor.BLUE);
         cas.setPlayer(player);
         Assert.assertEquals(player, player);
 
@@ -30,7 +29,7 @@ public class CaseTest {
     @Test
     public void testPlayer() {
         Case cas = new Case(CaseType.JAIL);
-        Player player = new Player(2, Color.GREEN);
+        Player player = new Player(2, PlayerColor.GREEN);
         Player p = cas.player();
         Assert.assertEquals(cas.player(), p);
     }

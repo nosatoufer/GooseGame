@@ -7,21 +7,23 @@ package goosegame.model;
  */
 public class Board {
 
-    private final Case m_board[] = new Case[64];
+    private final Case board[] = new Case[64];
 
     public Board(){
         for (int i = 0; i < 64; ++i) {
-            m_board[i] = new Case();
+            this.board[i] = new Case();
         }
-        for (int i = 9; i < 61; i += i) {
-            m_board[i].setType(CaseType.GOOSE);
+        for (int i = 9; i < 61; i += 9) {
+            this.board[i].setType(CaseType.GOOSE);
         }
-        m_board[6].setType(CaseType.BRIDGE);
-        m_board[19].setType(CaseType.INN);
-        m_board[31].setType(CaseType.WELL);
-        m_board[42].setType(CaseType.MAZE);
-        m_board[52].setType(CaseType.JAIL);
-        m_board[58].setType(CaseType.DEATH);
+        this.board[0].setType(CaseType.START);
+        this.board[6].setType(CaseType.BRIDGE);
+        this.board[19].setType(CaseType.INN);
+        this.board[31].setType(CaseType.WELL);
+        this.board[42].setType(CaseType.MAZE);
+        this.board[52].setType(CaseType.JAIL);
+        this.board[58].setType(CaseType.DEATH);
+        this.board[63].setType(CaseType.END);
     }
     
     /**
@@ -30,7 +32,7 @@ public class Board {
      */
     public void clearCase(int index)
     {
-        m_board[index].setPlayer(null);
+        this.board[index].setPlayer(null);
     }
     
     /**
@@ -40,8 +42,7 @@ public class Board {
      */
     public Case getCase(int index)
     {
-        System.out.println("index : "+index);
-        return m_board[index];
+        return this.board[index];
     }
     
     /**
@@ -54,8 +55,8 @@ public class Board {
         String s = "";
         for (int i = 1; i < 64; ++i) {
             s += " ";
-            if (m_board[i].player() != null) {
-                s += m_board[i].player().toString();
+            if (this.board[i].player() != null) {
+                s += this.board[i].player().toString();
             } else {
                 s += "   ";
             }
@@ -63,7 +64,7 @@ public class Board {
         }
         s += '\n';
         for (int i = 1; i < 64; ++i) {
-            s += m_board[i].toString();
+            s += this.board[i].toString();
         }
         return s;
     }

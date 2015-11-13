@@ -4,11 +4,8 @@ package goosegame.model;
  *
  * @author nosa
  */
-public enum Color {
-
-    /**
-     *
-     */
+public enum PlayerColor {
+    
     GREEN("vert", 0),
     PINK("rose", 1),
     BLUE("bleu", 2),
@@ -21,7 +18,7 @@ public enum Color {
     
     private final String desc;
     private final int value;
-    Color(String desc, int value)
+    PlayerColor(String desc, int value)
     {
         this.desc = desc;
         this.value = value;
@@ -38,6 +35,6 @@ public enum Color {
     }
     
     @Override
-    public String toString() { return this.name().substring(0, 3); }
+    public String toString() { return this.desc; }
 }
 

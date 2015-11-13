@@ -7,7 +7,6 @@ package goosegame.model;
 
 import org.junit.Assert;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
@@ -21,7 +20,7 @@ public class PlayerTest {
 
     @Test
     public void testPosition() {
-        Player p = new Player(6, Color.GREEN);
+        Player p = new Player(6, PlayerColor.GREEN);
         p.setPosition(52);
         int position = p.position();
         Assert.assertEquals(52, position);
@@ -38,7 +37,7 @@ public class PlayerTest {
      }*/
     @Test
     public void testIsStuck() {
-        Player p = new Player(1, Color.PINK);
+        Player p = new Player(1, PlayerColor.PINK);
         p.setStuck(2);
         int stuck = p.isStuck();
         Assert.assertEquals(2, stuck);
@@ -47,7 +46,7 @@ public class PlayerTest {
 
     @Test
     public void testIsJailed() {
-        Player p = new Player(1, Color.PINK);
+        Player p = new Player(1, PlayerColor.PINK);
         boolean jail = p.isJailed();
         if (jail) {
             Assert.assertEquals(true, jail);
@@ -66,7 +65,7 @@ public class PlayerTest {
 
     @Test
     public void testSetStuck() {
-        Player p = new Player(3, Color.YELLOW);
+        Player p = new Player(3, PlayerColor.YELLOW);
         p.setStuck(3);
         int stuck = p.isStuck();
         Assert.assertEquals(3, stuck);
@@ -74,7 +73,7 @@ public class PlayerTest {
 
     @Test
     public void testDecStuck() {
-        Player p = new Player(1, Color.PINK);
+        Player p = new Player(1, PlayerColor.PINK);
         p.setStuck(4);
         int stuck = p.isStuck();
         p.decStuck();
@@ -84,7 +83,7 @@ public class PlayerTest {
 
     @Test
     public void testSetJail() {
-        Player p = new Player(6, Color.GREEN);
+        Player p = new Player(6, PlayerColor.GREEN);
         boolean jail = p.isJailed();
         p.setJail();
         if (jail) {
@@ -95,7 +94,7 @@ public class PlayerTest {
     @Test
     public void testNumPlayer() {
         Case cas = new Case(CaseType.INN);//case numero 19
-        Player p = new Player(4, Color.BLUE);
+        Player p = new Player(4, PlayerColor.BLUE);
         int num = p.numPlayer();
         Assert.assertEquals(4, num);
 

@@ -34,27 +34,27 @@ public enum CaseType
     
     public String desc()
     {
-        return desc;
+        return this.desc;
     }
     
     public int value()
     {
-        return value;
+        return this.value;
     }
     
     public int stuck()
     {
-        return stuck;
+        return this.stuck;
     }
     
     public boolean move()
     {
-        return move;
+        return this.move;
     }
     
     public int exit()
     {
-        return exit;
+        return this.exit;
     }
     
     
