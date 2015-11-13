@@ -47,7 +47,7 @@ public class CaseView extends Parent {
         // Ajout du type de la case sur cette dernière
         caseTypeText = new Text("");
         caseTypeText.setFont(new Font(15));
-        caseTypeText.setFill(Color.GREY);
+        caseTypeText.setFill(Color.BLACK);
         caseTypeText.setX(10);
         caseTypeText.setY(35);
         this.getChildren().add(caseTypeText);
@@ -55,7 +55,7 @@ public class CaseView extends Parent {
         // Création et ajout du numéro de la case sur cette dernière
         posText = new Text(Integer.toString(pos));
         posText.setFont(new Font(15));
-        posText.setFill(Color.GREY);
+        posText.setFill(Color.BLACK);
         posText.setX(10);
         posText.setY(20);
         this.getChildren().add(posText);
