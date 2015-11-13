@@ -1,8 +1,7 @@
 package heb.esi.goosegame.model;
 
-import heb.esi.goosegame.view.MainWindow;
-import heb.esi.goosegame.view.View;
 
+import heb.esi.goosegame.controler.Controler;
 import java.util.ArrayList;
 
 import javafx.util.Pair;
@@ -12,8 +11,7 @@ import javafx.util.Pair;
  * @author nosa
  */
 public class Game {
-
-    private final ArrayList<View> views;
+    private final Controler controler;
     private final Board board;
     private final ArrayList<Player> players;
     private int currentPlayer;
@@ -21,14 +19,14 @@ public class Game {
     private final Dices dices;
     private boolean dicesRolled;
 
-    public Game() {
-        currentPlayer = 0;
-        views = new ArrayList<>();
-        players = new ArrayList<>();
-        board = new Board();
-        gameState = GameState.NOTSTARTED;
-        dices = new Dices(2, 6);
-        dicesRolled = false;
+    public Game(Controler controler) {
+        this.controler = controler;
+        this.currentPlayer = 0;
+        this.players = new ArrayList<>();
+        this.board = new Board();
+        this.gameState = GameState.NOTSTARTED;
+        this.dices = new Dices(2, 6);
+        this.dicesRolled = false;
     }
 
     public ArrayList<Pair<Integer, CaseType>> getSpecialCases() {
@@ -188,13 +186,7 @@ public class Game {
         return gameState;
     }
     
-    public void attachView(MainWindow view) {
-        this.views.add(view);
-    }
-    
     public void updateViews() {
-        for(int i=0; i<views.size(); i++) {
-            views.get(i).refresh();
-        }
+        this.controler.updateViews();
     }
 }

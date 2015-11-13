@@ -5,6 +5,7 @@ import heb.esi.goosegame.model.Game;
 import heb.esi.goosegame.model.GameState;
 import heb.esi.goosegame.model.PlayerColor;
 import heb.esi.goosegame.model.GooseGameException;
+import heb.esi.goosegame.view.View;
 import java.util.ArrayList;
 import javafx.util.Pair;
 
@@ -14,12 +15,19 @@ import javafx.util.Pair;
  */
 public class Controler {
     
-    private final Game game;
+    private Game game;
+
+    private final ArrayList<View> views;
     
-    public Controler (Game game)
+    public Controler ()
     {
+        this.views = new ArrayList<>();
+    }
+    
+    public void attachGame(Game game) {
         this.game = game;
     }
+    
     public void newPlayer(PlayerColor c) throws GooseGameException
     {
         this.game.addPlayer(c);
@@ -59,5 +67,15 @@ public class Controler {
     
     public ArrayList<Pair<Integer, CaseType>> getSpecialCases() {
         return game.getSpecialCases();
+    }
+    
+    public void attachView(View view) {
+        this.views.add(view);
+    }
+    
+    public void updateViews() {
+        for(int i=0; i<views.size(); i++) {
+            views.get(i).refresh();
+        }
     }
 }

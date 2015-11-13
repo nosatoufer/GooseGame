@@ -21,16 +21,19 @@ public class GooseGame extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        // Création du model : le jeu
-        Game game = new Game();
+        // Création du controler
+        Controler controler = new Controler();
         
-        // Création du controler avec attachement du modèle (pour que le controler puisse agir sur le model)
-        Controler controler = new Controler(game);
+        // Création du model : le jeu
+        Game game = new Game(controler);
         
         // Création de la vue avec attachement du controler (pour envoyer les interactions de l'utilisateur)
         MainWindow mw = new MainWindow(controler);
         
+        
+        // Attachement du modèle (pour que le controler puisse agir sur le model)
+        controler.attachGame(game);
         // Attachement de la vue au modèle (pour la mettre à jour lors du changement du modèle)
-        game.attachView(mw);
+        controler.attachView(mw);
     }
 }
