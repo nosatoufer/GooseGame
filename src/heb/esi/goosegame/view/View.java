@@ -1,4 +1,4 @@
-package goosegame.view;
+package heb.esi.goosegame.view;
 
 /**
  *

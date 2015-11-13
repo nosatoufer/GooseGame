@@ -1,7 +1,7 @@
-package goosegame.view;
+package heb.esi.goosegame.view;
 
-import goosegame.model.CaseType;
-import goosegame.model.PlayerColor;
+import heb.esi.goosegame.model.CaseType;
+import heb.esi.goosegame.model.PlayerColor;
 
 import javafx.scene.Parent;
 import javafx.scene.paint.Color;

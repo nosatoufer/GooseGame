@@ -5,6 +5,7 @@
  */
 package goosegame.model;
 
+import heb.esi.goosegame.model.Dice;
 import org.junit.Assert;
 import org.junit.Test;
 import static org.junit.Assert.*;

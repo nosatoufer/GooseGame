@@ -1,8 +1,8 @@
-package goosegame.view;
+package heb.esi.goosegame.view;
 
-import goosegame.controler.Controler;
-import goosegame.model.PlayerColor;
-import goosegame.model.GooseGameException;
+import heb.esi.goosegame.controler.Controler;
+import heb.esi.goosegame.model.PlayerColor;
+import heb.esi.goosegame.model.GooseGameException;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

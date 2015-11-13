@@ -5,6 +5,8 @@
  */
 package goosegame.model;
 
+import heb.esi.goosegame.model.Dices;
+import heb.esi.goosegame.model.Dice;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Assert;

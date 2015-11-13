@@ -5,6 +5,8 @@
  */
 package goosegame.model;
 
+import heb.esi.goosegame.model.GooseGameException;
+import heb.esi.goosegame.model.Board;
 import org.junit.Assert;
 import org.junit.Test;
 import static org.junit.Assert.*;

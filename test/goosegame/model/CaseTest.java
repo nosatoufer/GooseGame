@@ -5,6 +5,10 @@
  */
 package goosegame.model;
 
+import heb.esi.goosegame.model.Player;
+import heb.esi.goosegame.model.Case;
+import heb.esi.goosegame.model.CaseType;
+import heb.esi.goosegame.model.PlayerColor;
 import org.junit.Assert;
 import org.junit.Test;
 

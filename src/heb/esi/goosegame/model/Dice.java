@@ -1,4 +1,4 @@
-package goosegame.model;
+package heb.esi.goosegame.model;
 
 import java.util.Random;
 
