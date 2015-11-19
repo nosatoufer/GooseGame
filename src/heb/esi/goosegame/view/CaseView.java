@@ -1,9 +1,15 @@
 package heb.esi.goosegame.view;
 
+import heb.esi.goosegame.controler.Controler;
 import heb.esi.goosegame.model.CaseType;
+import heb.esi.goosegame.model.GooseGameException;
 import heb.esi.goosegame.model.PlayerColor;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.event.EventHandler;
 
 import javafx.scene.Parent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
@@ -15,19 +21,28 @@ import javafx.scene.text.Text;
  */
 public class CaseView extends Parent {
     
+    // Numéro de la case
+    private final int pos;
+    
     // Coordonées graphiques de la case sur le plateau :
-    private int x; // Abscisse
-    private int y; // Ordonnée
+    private final int x; // Abscisse
+    private final int y; // Ordonnée
     
     // Elements graphiques composants la case :
     private final Rectangle fond;
     private final Text caseTypeText; // Label décrivant l'effet de la case
     private final Text posText; // Label indiquant le numéro de la case
-    private Rectangle player; // Element permettant d'afficher le joueur sur la case
+    private final Rectangle player; // Element permettant d'afficher le joueur sur la case
     
     private PlayerColor playerColor; // Couleur du joueur présent sur la 
     
-    public CaseView(int pos, int x, int y) {
+    Controler controler;
+    
+    public CaseView(Controler controler, int pos, int x, int y) {
+        this.controler = controler;
+        
+        this.pos = pos;
+        
         this.x = x;
         this.y = y;
         this.playerColor = null;
@@ -63,6 +78,16 @@ public class CaseView extends Parent {
         // Positionnement de la case sur le plateau
         this.setTranslateX(this.x);
         this.setTranslateY(this.y);
+        
+        this.setOnMouseClicked(new EventHandler<MouseEvent>(){
+            public void handle(MouseEvent me){
+                try {
+                    controler.movePlayerToPos(pos);
+                } catch (GooseGameException ex) {
+                    Logger.getLogger(BoardView.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
     }
     
     public void setType(CaseType type) {

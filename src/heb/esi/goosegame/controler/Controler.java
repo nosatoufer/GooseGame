@@ -28,14 +28,26 @@ public class Controler {
         this.game = game;
     }
     
+    public void newGame() {
+        this.game = new Game(this);
+    }
+    
     public void newPlayer(PlayerColor c) throws GooseGameException
     {
         this.game.addPlayer(c);
     }
-    public void play() throws GooseGameException
+    /*public void play() throws GooseGameException
     {
         this.game.play();
-    }    
+    }*/   
+    public void movePlayerToPos(int pos) throws GooseGameException
+    {
+        this.game.play(pos);
+    }
+    public void checkPlayers() throws GooseGameException
+    {
+        this.game.checkPlayers();
+    }
     public void rollDice() throws GooseGameException
     {
         this.game.rollDices();

@@ -5,6 +5,7 @@ import heb.esi.goosegame.model.GooseGameException;
 import heb.esi.goosegame.model.PlayerColor;
 
 import java.util.ArrayList;
+import javafx.event.ActionEvent;
 
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -13,7 +14,11 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -29,15 +34,23 @@ public class MainWindow extends Parent implements View {
     private final Controler controler;
     
     private Button throwDicesButton;
-    private Button playButton;
     private final Text dicesSumText;
     private final Text playerText;
     
     private final BoardView board;
     
+    private final BorderPane borderpane;
     private final GridPane gridpane;
     
     private final Stage mainStage;
+    
+    private final MenuBar menuBar;
+    private final Menu menuFile;
+    private final MenuItem newGame;
+    private final MenuItem quit;
+    private final Menu menuGame;
+    private final MenuItem addPlayer;
+    private final MenuItem startGame;
     
     public MainWindow(Controler controler) {
         // Création du controler avec attachement du modèle (pour que le controler puisse agir sur le model)
@@ -45,13 +58,67 @@ public class MainWindow extends Parent implements View {
         
         mainStage = new Stage();
         mainStage.setTitle("Goose Game");
+        mainStage.setResizable(false);
         Group mainGroup = new Group();
-        Scene mainScene = new Scene(mainGroup, 845, 635);
-        
-        //mainGroup.getChildren().add(this);
+        Scene mainScene = new Scene(mainGroup, 835, 650);
         
         mainStage.setScene(mainScene);        
         
+        // Barre de menu
+        menuBar = new MenuBar();
+ 
+        // --- Menu File
+        menuFile = new Menu("File");
+        newGame = new MenuItem("New Game");
+        newGame.setOnAction(new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent t) {
+                startGame.setDisable(false);
+                addPlayer.setDisable(false);
+                board.reset();
+                controler.newGame();
+            }
+        });
+        menuFile.getItems().addAll(newGame);
+        quit = new MenuItem("Quitter");
+        quit.setOnAction(new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent t) {
+                mainStage.close();
+            }
+        });
+        menuFile.getItems().addAll(quit);
+ 
+        // --- Menu Game
+        menuGame = new Menu("Game");
+        addPlayer = new MenuItem("Add player");
+        addPlayer.setOnAction(new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent t) {
+                PlayerChoice playerChoice = new PlayerChoice(mainStage, controler);
+                addPlayer.setDisable(true);
+            }
+        });
+        menuGame.getItems().addAll(addPlayer);
+        startGame = new MenuItem("Start game");
+        startGame.setOnAction(new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent t) {
+                try {
+                    controler.startGame(); // On débute la partie
+                    startGame.setDisable(true);
+                } catch (GooseGameException ex) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Erreur lors du début de la partie");
+                        alert.setHeaderText(null);
+                        alert.setContentText(ex.getMessage());
+
+                        alert.showAndWait();
+                }
+            }
+        });
+        menuGame.getItems().addAll(startGame);
+        
+        // Ajout des menu à la barre des menus
+        menuBar.getMenus().addAll(menuFile, menuGame);
+        
+        // Boutons de l'interface de jeu
         throwDicesButton = new Button();
         throwDicesButton.setText("Lancer le dé");
         throwDicesButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -60,9 +127,6 @@ public class MainWindow extends Parent implements View {
                 try {
                     // On fait rouler les dés
                     controler.rollDice();
-                    
-                    throwDicesButton.setDisable(true);
-                    playButton.setDisable(false);
                 } catch (GooseGameException ex) {
                     Alert alert = new Alert(Alert.AlertType.ERROR);
                         alert.setTitle("Erreur lors du lancement des dés de la partie");
@@ -78,38 +142,11 @@ public class MainWindow extends Parent implements View {
         dicesSumText = new Text("/");
         dicesSumText.setFont(new Font(15));
         
-        playButton = new Button();
-        playButton.setText("Déplacer le pion");
-        playButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent me) {
-                try {
-                    // On fait jouer le joueur
-                    controler.play();
-                    
-                    if (controler.isGameOver()) {
-                        throwDicesButton.setDisable(true);
-                    } else {
-                        throwDicesButton.setDisable(false);
-                    }
-                    playButton.setDisable(true);
-                } catch (GooseGameException ex) {
-                    Alert alert = new Alert(Alert.AlertType.ERROR);
-                        alert.setTitle("Erreur lors du déplacement du pion");
-                        alert.setHeaderText(null);
-                        alert.setContentText(ex.getMessage());
-
-                        alert.showAndWait();
-                }
-            }
-        });
-        playButton.setDisable(true);
-        
-        // Texte permettant d'afficher le joueur suivant le gagnant
+        // Texte permettant d'afficher le joueur suivant ou le gagnant
         playerText = new Text("");
         playerText.setFont(new Font(15));
         
-        board = new BoardView(controler.getSpecialCases());
+        board = new BoardView(controler);
         
         gridpane = new GridPane();
         gridpane.setVgap(4);
@@ -117,15 +154,16 @@ public class MainWindow extends Parent implements View {
         gridpane.setPadding(new Insets(5, 5, 5, 5));
         gridpane.add(throwDicesButton, 0, 0);
         gridpane.add(dicesSumText, 1, 0);
-        gridpane.add(playButton, 2, 0);
-        gridpane.add(playerText, 3, 0);
-        gridpane.add(board, 0, 1, 4, 1);
+        gridpane.add(playerText, 2, 0);
+        gridpane.add(board, 0, 1, 3, 1);
 
-        mainGroup.getChildren().add(gridpane);
+        borderpane = new BorderPane();
+        borderpane.setTop(menuBar);
+        borderpane.setCenter(gridpane);
+        
+        mainGroup.getChildren().add(borderpane);
         
         mainStage.show();
-    
-        PlayerChoice playerChoice = new PlayerChoice(mainStage, controler);
     }
     
     @Override

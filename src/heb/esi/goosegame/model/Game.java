@@ -34,8 +34,14 @@ public class Game {
     }
     
     public void addPlayer(PlayerColor col) throws GooseGameException {
-        if (gameState != GameState.NOTSTARTED || players.size() > 8 || !checkColor(col)) {
-            throw new GooseGameException("Création de joueur impossible.");
+        if (gameState != GameState.NOTSTARTED) {
+            throw new GooseGameException("Création de joueur impossible, la partie a déjà commencée.");
+        }
+        if (players.size() > 8) {
+            throw new GooseGameException("Création de joueur impossible, le nombre limite (8) a été atteint.");
+        }
+        if (!checkColor(col)) {
+            throw new GooseGameException("Création de joueur impossible, un joueur de cette couleur existe déjà.");
         }
         players.add(new Player(players.size(), col));
     }
@@ -63,16 +69,27 @@ public class Game {
         return c;
     }
 
-    public void play() throws GooseGameException {
+    public void play(int position) throws GooseGameException {
         if (!dicesRolled) {
             throw new GooseGameException("Les dés n'ont pas été jetés!");
         }
-        dicesRolled = false;
+        
         Player p = players.get(currentPlayer);
         
         Case c;
         
         int pos = p.position() + dices.sum();
+        
+        if (pos > 63) {
+            pos = 63 - (pos - 63);
+        }
+        
+        if (pos != position) {
+            throw new GooseGameException("Déplacement non autorisé");
+        }
+        
+        dicesRolled = false;
+            
         if (p.position() == 0) {
             if (dices.diceValue(0) == 6 || dices.diceValue(1) == 6) {
                 if (dices.diceValue(1) == 3 || dices.diceValue(0) == 3) {
@@ -84,13 +101,14 @@ public class Game {
                     pos = 53;
                 }
             }
-        } else {
+        }/* else {
             if (pos > 63) {
                 pos = 63 - (pos - 63);
             }
-        }
+        }*/
+        
         c = movePlayer(p, pos);
-
+        
         if (c.type() != CaseType.END) { // Si on est pas arrivé à la fin, on regarde sur quelle case on est tombé
             
             p.setStuck(c.type().stuck()); // On coince le joueur pour x tours (en fonction de la case, les cases ne coincant pas le joueur laisse la valeur à 0)
@@ -162,6 +180,12 @@ public class Game {
         dicesRolled = false;
         
         updateViews();
+    }
+    
+    public void checkPlayers() throws GooseGameException {
+        if (players.size() < 2 || players.size() > 8) {
+            throw new GooseGameException("Nombre de joueurs incorrects : entre 2 et 8 compris.");
+        }
     }
     
     public int getDicesSum() {

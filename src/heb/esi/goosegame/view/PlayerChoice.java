@@ -36,6 +36,7 @@ public class PlayerChoice extends Parent {
         
         Stage playerChoiceStage = new Stage();
         playerChoiceStage.setTitle("Ajout des joueurs");
+        playerChoiceStage.setResizable(false);
         Group playerChoiceGroup = new Group();
         Scene playerChoiceScene = new Scene(playerChoiceGroup);
         playerChoiceStage.initOwner(parent);
@@ -132,13 +133,13 @@ public class PlayerChoice extends Parent {
         });
         
         // Création du bouton permettant de commencer la partie
-        Button startButton = new Button();
-        startButton.setText("Commencer la partie");
-        startButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+        Button closeButton = new Button();
+        closeButton.setText("Choix des joueurs terminés");
+        closeButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent me) {
                 try {
-                    controler.startGame(); // On débute la partie
+                    controler.checkPlayers(); // On débute la partie
                     playerChoiceStage.close(); // On ferme la fenêtre de choix du joueur
                 } catch (GooseGameException ex) {
                     Alert alert = new Alert(AlertType.ERROR);
@@ -158,7 +159,7 @@ public class PlayerChoice extends Parent {
         gridpane.setPadding(new Insets(5, 5, 5, 5));
         gridpane.add(colorComboBox, 0, 0);
         gridpane.add(addPlayerButton, 1, 0);
-        gridpane.add(startButton, 2, 0);
+        gridpane.add(closeButton, 2, 0);
         gridpane.add(listOfPlayersText, 0, 1, 3, 1);
 
         this.getChildren().add(gridpane);
