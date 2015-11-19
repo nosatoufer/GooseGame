@@ -1,11 +1,12 @@
 package heb.esi.goosegame.view;
 
-import heb.esi.goosegame.controler.Controler;
+import heb.esi.goosegame.controler.Controller;
 import heb.esi.goosegame.model.CaseType;
 import heb.esi.goosegame.model.GooseGameException;
 import heb.esi.goosegame.model.PlayerColor;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.io.Serializable;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ObjectPropertyBase;
 import javafx.event.EventHandler;
 
 import javafx.scene.Parent;
@@ -17,9 +18,16 @@ import javafx.scene.text.Text;
 
 /**
  *
+ * Classe représentant une case dans l'interface graphique. 
+ * Il s'agit d'un Java Bean qui prévient ses listeners lorsque la couleur du joueur présent
+ * sur sa case change.
+ * La case peut être "allumée" (jaune) lorsqu'elle recquire une interaction de
+ * la part de l'utilisateur (bouger son pion par exemple).
+ * 
  * @author Maxime
  */
-public class CaseView extends Parent {
+public class CaseView extends Parent implements Serializable {
+    Controller controler;
     
     // Numéro de la case
     private final int pos;
@@ -34,57 +42,76 @@ public class CaseView extends Parent {
     private final Text posText; // Label indiquant le numéro de la case
     private final Rectangle player; // Element permettant d'afficher le joueur sur la case
     
-    private PlayerColor playerColor; // Couleur du joueur présent sur la 
+    protected ObjectProperty<PlayerColor> playerColor; // Couleur du joueur présent sur la case
     
-    Controler controler;
-    
-    public CaseView(Controler controler, int pos, int x, int y) {
+    public CaseView(Controller controler, int pos, int x, int y) {
         this.controler = controler;
         
         this.pos = pos;
         
         this.x = x;
         this.y = y;
-        this.playerColor = null;
+        
+        // Propriété prise en compte par le bean (couleur du joueur présent
+        // sur la case)
+        this.playerColor = new ObjectPropertyBase<PlayerColor>(null) {
+            @Override
+            public Object getBean() {
+                 return this;
+            }
+
+            @Override
+            public String getName() {
+                return "Color property";
+            }
+        };
+ 
         
         // Ajout de la couleur de fond de la case
-        fond = new Rectangle(75,75,Color.WHITE);
-        fond.setArcHeight(10);
-        fond.setArcWidth(10);
-        this.getChildren().add(fond);
+        this.fond = new Rectangle(75,75,Color.WHITE);
+        this.fond.setArcHeight(10);
+        this.fond.setArcWidth(10);
+        this.getChildren().add(this.fond);
         
         // Création du rectangle représentant le pion d'un futur joueur sur la case
-        player = new Rectangle(10,10,Color.WHITE);
-        player.setX(60);
-        player.setY(60);
-        this.getChildren().add(player);
+        this.player = new Rectangle(10,10,Color.WHITE);
+        this.player.setX(60);
+        this.player.setY(60);
+        this.getChildren().add(this.player);
         
         // Ajout du type de la case sur cette dernière
-        caseTypeText = new Text("");
-        caseTypeText.setFont(new Font(15));
-        caseTypeText.setFill(Color.BLACK);
-        caseTypeText.setX(10);
-        caseTypeText.setY(35);
-        this.getChildren().add(caseTypeText);
+        this.caseTypeText = new Text("");
+        this.caseTypeText.setFont(new Font(15));
+        this.caseTypeText.setFill(Color.BLACK);
+        this.caseTypeText.setX(10);
+        this.caseTypeText.setY(35);
+        this.getChildren().add(this.caseTypeText);
         
         // Création et ajout du numéro de la case sur cette dernière
-        posText = new Text(Integer.toString(pos));
-        posText.setFont(new Font(15));
-        posText.setFill(Color.BLACK);
-        posText.setX(10);
-        posText.setY(20);
-        this.getChildren().add(posText);
+        this.posText = new Text(Integer.toString(pos));
+        this.posText.setFont(new Font(15));
+        this.posText.setFill(Color.BLACK);
+        this.posText.setX(10);
+        this.posText.setY(20);
+        this.getChildren().add(this.posText);
         
         // Positionnement de la case sur le plateau
         this.setTranslateX(this.x);
         this.setTranslateY(this.y);
         
+        // Implémentation de l'action qui a lieu lorsqu'on clique sur la case
+        // (pour déplacer son joueur normalement)
         this.setOnMouseClicked(new EventHandler<MouseEvent>(){
             public void handle(MouseEvent me){
                 try {
+                    // On fait appel au controleur pour déplacer le joueur
                     controler.movePlayerToPos(pos);
+                    // On "éteind la case" car le joueur a déplacé son pion
+                    turnOff();
                 } catch (GooseGameException ex) {
-                    Logger.getLogger(BoardView.class.getName()).log(Level.SEVERE, null, ex);
+                    // Si le joueur a cliqué sur la case par inadvertance (mauvaise
+                    // case ou mauvais moment), une exception est levée et est
+                    // attrapée ici.
                 }
             }
         });
@@ -93,37 +120,65 @@ public class CaseView extends Parent {
     public void setType(CaseType type) {
         switch (type) {
             case GOOSE:
-                caseTypeText.setText("Goose");
+                this.caseTypeText.setText("Goose");
             break;
             case BRIDGE:
-                caseTypeText.setText("Bridge");
+                this.caseTypeText.setText("Bridge");
             break;
             case INN:
-                caseTypeText.setText("Inn");
+                this.caseTypeText.setText("Inn");
             break;
             case WELL:
-                caseTypeText.setText("Well");
+                this.caseTypeText.setText("Well");
             break;
             case MAZE:
-                caseTypeText.setText("Maze");
+                this.caseTypeText.setText("Maze");
             break;
             case JAIL:
-                caseTypeText.setText("Jail");
+                this.caseTypeText.setText("Jail");
             break;
             case DEATH:
-                caseTypeText.setText("Death");
+                this.caseTypeText.setText("Death");
             break;
             case START:
-                caseTypeText.setText("Start");
+                this.caseTypeText.setText("Start");
             break;
             case END:
-                caseTypeText.setText("End");
+                this.caseTypeText.setText("End");
             break;
         }
     }
     
-    public void setPlayer(PlayerColor color) {
-        this.playerColor = color;
+    /**
+     * On "allume" la case pour signaler au joueur qu'il doit déplacer son pion
+     * sur cette case.
+     */
+    public void turnOn() {
+        this.fond.setFill(Color.YELLOW);
+    }
+    
+    /**
+     * On "éteind" la case lorsque la case a été cliquée
+     */
+    public void turnOff() {
+        this.fond.setFill(Color.WHITE);
+    }
+    
+    /**
+     * Retourne la couleur du joueur présent sur la case
+     * @return Couleur du joueur présent sur la case
+     */
+    public final PlayerColor getPlayerColor() {
+        return this.playerColor.get();
+    }
+     
+    /**
+     * On place le joueur de couleur color sur la case
+     * @param color
+     */
+    public final void setPlayerColor(PlayerColor color){
+        this.playerColor.set(color);
+        
         if (color != null) {
             switch (color) {
                 case GREEN:
@@ -164,8 +219,12 @@ public class CaseView extends Parent {
             player.setStroke(Color.WHITE);
         }
     }
-    
-    public PlayerColor getPlayer() {
+
+    /**
+     * Méthode du beans permettant d'attacher un listener sur l'attribut PlayerColor
+     * @return ObjectProperty
+     */
+    public final ObjectProperty<PlayerColor> playerColorProperty(){
         return this.playerColor;
     }
 }

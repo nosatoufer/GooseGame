@@ -1,10 +1,12 @@
 package heb.esi.goosegame.view;
 
-import heb.esi.goosegame.controler.Controler;
+import heb.esi.goosegame.controler.Controller;
 import heb.esi.goosegame.model.GooseGameException;
 import heb.esi.goosegame.model.PlayerColor;
 
 import java.util.ArrayList;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 
 import javafx.event.EventHandler;
@@ -26,14 +28,16 @@ import javafx.stage.Stage;
 import javafx.util.Pair;
 
 /**
- *
+ * Classe de la fenêtre principale du jeu.
+ * Il s'agit de la vue qui reçoit les mises à jour du modèle par le controleur.
+ * 
  * @author Maxime
  */
 public class MainWindow extends Parent implements View {
     
-    private final Controler controler;
+    private final Controller controller;
     
-    private Button throwDicesButton;
+    private final Button throwDicesButton;
     private final Text dicesSumText;
     private final Text playerText;
     
@@ -43,6 +47,8 @@ public class MainWindow extends Parent implements View {
     private final GridPane gridpane;
     
     private final Stage mainStage;
+    private final Group mainGroup;
+    private final Scene mainScene;
     
     private final MenuBar menuBar;
     private final Menu menuFile;
@@ -52,58 +58,77 @@ public class MainWindow extends Parent implements View {
     private final MenuItem addPlayer;
     private final MenuItem startGame;
     
-    public MainWindow(Controler controler) {
+    public MainWindow(Controller controller) {
         // Création du controler avec attachement du modèle (pour que le controler puisse agir sur le model)
-        this.controler = controler;
+        this.controller = controller;
         
-        mainStage = new Stage();
-        mainStage.setTitle("Goose Game");
-        mainStage.setResizable(false);
-        Group mainGroup = new Group();
-        Scene mainScene = new Scene(mainGroup, 835, 650);
-        
-        mainStage.setScene(mainScene);        
+        // Création des éléments de la fenêtre de base
+        this.mainStage = new Stage();
+        this.mainStage.setTitle("Goose Game");
+        this.mainStage.setResizable(false);
+        this.mainGroup = new Group();
+        this.mainScene = new Scene(this.mainGroup, 835, 650);
+        this.mainStage.setScene(this.mainScene);        
         
         // Barre de menu
-        menuBar = new MenuBar();
+        this.menuBar = new MenuBar();
  
-        // --- Menu File
-        menuFile = new Menu("File");
-        newGame = new MenuItem("New Game");
-        newGame.setOnAction(new EventHandler<ActionEvent>() {
+        // Menu File de la barre de menu
+        this.menuFile = new Menu("File");
+        // On ajoute l'item "New Game" au menu "File"
+        this.newGame = new MenuItem("New Game");
+        this.newGame.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent t) {
-                startGame.setDisable(false);
-                addPlayer.setDisable(false);
+                // Réinitialise le plateau
                 board.reset();
-                controler.newGame();
+                // Crée une nouvelle partie
+                controller.newGame();
+                // Action : désactive et active les boutons correctement
+                startGame.setDisable(true);
+                addPlayer.setDisable(false);
+                dicesSumText.setText("/");
+                playerText.setText("");
+                throwDicesButton.setDisable(true);
             }
         });
-        menuFile.getItems().addAll(newGame);
-        quit = new MenuItem("Quitter");
-        quit.setOnAction(new EventHandler<ActionEvent>() {
+        this.menuFile.getItems().addAll(newGame);
+        // On ajoute l'item "Quit" au menu "File"
+        this.quit = new MenuItem("Quit");
+        this.quit.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent t) {
+                // Action : quitte la fenêtre
                 mainStage.close();
             }
         });
-        menuFile.getItems().addAll(quit);
+        this.menuFile.getItems().addAll(quit);
  
-        // --- Menu Game
-        menuGame = new Menu("Game");
-        addPlayer = new MenuItem("Add player");
-        addPlayer.setOnAction(new EventHandler<ActionEvent>() {
+        // Menu Game de la barre de menu
+        this.menuGame = new Menu("Game");
+        // On ajoute l'item "Add players" au menu "Game"
+        this.addPlayer = new MenuItem("Add players");
+        this.addPlayer.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent t) {
-                PlayerChoice playerChoice = new PlayerChoice(mainStage, controler);
+                // Action : demande la liste de joueurs qui joue à la partie
+                PlayerChoice playerChoice = new PlayerChoice(mainStage, controller);
+                // Désactive son MenuItem
                 addPlayer.setDisable(true);
+                // Active le MenuItem permettant de commencer la partie
+                startGame.setDisable(false);
             }
         });
-        menuGame.getItems().addAll(addPlayer);
-        startGame = new MenuItem("Start game");
-        startGame.setOnAction(new EventHandler<ActionEvent>() {
+        this.menuGame.getItems().addAll(addPlayer);
+        // On ajoute l'item "Start Game" au menu "Game"
+        this.startGame = new MenuItem("Start game");
+        this.startGame.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent t) {
+                // Action :
                 try {
-                    controler.startGame(); // On débute la partie
-                    startGame.setDisable(true);
+                    controller.startGame(); // On débute la partie
+                    startGame.setDisable(true); // On désactive le MenuItem
+                    throwDicesButton.setDisable(false);
                 } catch (GooseGameException ex) {
+                    // Si une erreur survient au début la partie, on affiche un
+                    // message d'erreur.
                     Alert alert = new Alert(Alert.AlertType.ERROR);
                         alert.setTitle("Erreur lors du début de la partie");
                         alert.setHeaderText(null);
@@ -113,21 +138,30 @@ public class MainWindow extends Parent implements View {
                 }
             }
         });
-        menuGame.getItems().addAll(startGame);
+        this.startGame.setDisable(true);
+        this.menuGame.getItems().addAll(startGame);
         
         // Ajout des menu à la barre des menus
-        menuBar.getMenus().addAll(menuFile, menuGame);
+        this.menuBar.getMenus().addAll(menuFile, menuGame);
         
-        // Boutons de l'interface de jeu
-        throwDicesButton = new Button();
-        throwDicesButton.setText("Lancer le dé");
-        throwDicesButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+        // Boutons permettabt de lancer les dés
+        this.throwDicesButton = new Button();
+        this.throwDicesButton.setText("Lancer le dé");
+        this.throwDicesButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent me) {
+                // Action
                 try {
-                    // On fait rouler les dés
-                    controler.rollDice();
+                    // On fait rouler les dés dans le modèle
+                    controller.rollDice();
+                    // On désactive le bouton
+                    throwDicesButton.setDisable(true);
+                    // On allume la case sur lequel le joueur va devoir cliquer
+                    // pour se déplacer
+                    board.turnOn(controller.getNextCaseToMove());
                 } catch (GooseGameException ex) {
+                    // Si une erreur survient lors du clic sur le bouton, un
+                    // message s'affiche à l'utilisateur.
                     Alert alert = new Alert(Alert.AlertType.ERROR);
                         alert.setTitle("Erreur lors du lancement des dés de la partie");
                         alert.setHeaderText(null);
@@ -137,57 +171,77 @@ public class MainWindow extends Parent implements View {
                 }
             }
         });
+        this.throwDicesButton.setDisable(true);
         
         // Texte permettant d'afficher le résultat des dés
-        dicesSumText = new Text("/");
-        dicesSumText.setFont(new Font(15));
+        this.dicesSumText = new Text("/");
+        this.dicesSumText.setFont(new Font(15));
         
         // Texte permettant d'afficher le joueur suivant ou le gagnant
-        playerText = new Text("");
-        playerText.setFont(new Font(15));
+        this.playerText = new Text("");
+        this.playerText.setFont(new Font(15));
         
-        board = new BoardView(controler);
+        // Plateau du jeu
+        this.board = new BoardView(controller);
+        // On s'ajoute comme Listener de l'attribut playerMoved du plateau (attribut
+        // indiquant si un joueur a bougé).
+        this.board.playerMovedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
+                // Si un joueur a bougé, on réinitialise la variable du plateau à false
+                board.setPlayerMoved(false);
+                // On active le bouton pour lancer les dés du prochain joueur
+                throwDicesButton.setDisable(false);
+            }
+        });
         
-        gridpane = new GridPane();
-        gridpane.setVgap(4);
-        gridpane.setHgap(10);
-        gridpane.setPadding(new Insets(5, 5, 5, 5));
-        gridpane.add(throwDicesButton, 0, 0);
-        gridpane.add(dicesSumText, 1, 0);
-        gridpane.add(playerText, 2, 0);
-        gridpane.add(board, 0, 1, 3, 1);
+        // Layout permettant de mettre en page les éléments de la fenêtre
+        this.gridpane = new GridPane();
+        this.gridpane.setVgap(4);
+        this.gridpane.setHgap(10);
+        this.gridpane.setPadding(new Insets(5, 5, 5, 5));
+        this.gridpane.add(throwDicesButton, 0, 0);
+        this.gridpane.add(dicesSumText, 1, 0);
+        this.gridpane.add(playerText, 2, 0);
+        this.gridpane.add(board, 0, 1, 3, 1);
 
-        borderpane = new BorderPane();
-        borderpane.setTop(menuBar);
-        borderpane.setCenter(gridpane);
+        // Layout permettant de mettre en la barre de menu avec le reste des éléments
+        this.borderpane = new BorderPane();
+        this.borderpane.setTop(menuBar);
+        this.borderpane.setCenter(gridpane);
         
-        mainGroup.getChildren().add(borderpane);
+        this.mainGroup.getChildren().add(borderpane);
         
-        mainStage.show();
+        this.mainStage.show();
     }
     
+    /**
+     * Méthode de mise à jour de l'interface graphique, appelée par le modèle lors d'un changement.
+     */
     @Override
     public void refresh() {
-        // Méthode de mise à jour de l'interface graphique, appelée par le modèle lors d'un changement
-
         // On met à jour la position des joueurs sur le plateau
-        ArrayList<Pair<PlayerColor,Integer>> players = controler.getPlayerPos();
+        ArrayList<Pair<PlayerColor,Integer>> players = this.controller.getPlayerPos();
         for (Pair<PlayerColor, Integer> player : players) {
-            board.updatePlayer(player.getKey(), player.getValue());
+            this.board.updatePlayer(player.getKey(), player.getValue());
         }
         
         // Si le jeu n'est pas encore fini :
-        if (controler.isGameStarted()) {        
+        if (this.controller.isGameStarted()) {        
             // On affiche le résultat des dés
-            dicesSumText.setText(Integer.toString(controler.getDicesSum()));
+            this.throwDicesButton.setDisable(false);
+            this.dicesSumText.setText(Integer.toString(this.controller.getDicesSum()));
 
             // On affiche le joueur suivant
-            playerText.setText("Joueur suivant : "+controler.getCurrentPlayerColor());
+            this.playerText.setText("Joueur suivant : "+this.controller.getCurrentPlayerColor());
 
         // Si le jeu est fini :
-        } else if (controler.isGameOver()) {
+        } else if (this.controller.isGameOver()) {
             // On affiche le joueur gagnant
-            playerText.setText("Joueur gagnant : "+controler.getCurrentPlayerColor());
+            this.playerText.setText("Joueur gagnant : "+this.controller.getCurrentPlayerColor());
+            
+            // On désactive le bouton de lancer de dé
+            this.throwDicesButton.setDisable(true);
             
             // On le notifie par un message
             Alert alert = new Alert(Alert.AlertType.INFORMATION);

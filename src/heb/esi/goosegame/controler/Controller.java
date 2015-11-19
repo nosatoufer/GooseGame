@@ -13,19 +13,25 @@ import javafx.util.Pair;
  *
  * @author nosa
  */
-public class Controler {
+public class Controller {
     
     private Game game;
 
     private final ArrayList<View> views;
     
-    public Controler ()
+    public Controller ()
     {
         this.views = new ArrayList<>();
     }
     
-    public void attachGame(Game game) {
-        this.game = game;
+    public void attachView(View view) {
+        this.views.add(view);
+    }
+    
+    public void updateViews() {
+        for(int i=0; i<views.size(); i++) {
+            views.get(i).refresh();
+        }
     }
     
     public void newGame() {
@@ -36,25 +42,30 @@ public class Controler {
     {
         this.game.addPlayer(c);
     }
-    /*public void play() throws GooseGameException
-    {
-        this.game.play();
-    }*/   
+    
     public void movePlayerToPos(int pos) throws GooseGameException
     {
         this.game.play(pos);
     }
+    
     public void checkPlayers() throws GooseGameException
     {
         this.game.checkPlayers();
     }
+    
     public void rollDice() throws GooseGameException
     {
         this.game.rollDices();
     }
+    
     public void startGame() throws GooseGameException
     {
         this.game.start();
+    }
+    
+    public int getNextCaseToMove() throws GooseGameException
+    {
+        return this.game.getNextCaseToMove();
     }
     
     public ArrayList<Pair<PlayerColor, Integer>> getPlayerPos() {
@@ -79,15 +90,5 @@ public class Controler {
     
     public ArrayList<Pair<Integer, CaseType>> getSpecialCases() {
         return game.getSpecialCases();
-    }
-    
-    public void attachView(View view) {
-        this.views.add(view);
-    }
-    
-    public void updateViews() {
-        for(int i=0; i<views.size(); i++) {
-            views.get(i).refresh();
-        }
     }
 }
