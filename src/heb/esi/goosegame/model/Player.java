@@ -13,8 +13,18 @@ public class Player {
     private int stuck;
     private boolean jail;
     
-    public Player(int num, PlayerColor color)
+    /**
+     *
+     * @param num
+     * @param color
+     * @throws GooseGameException
+     */
+    public Player(int num, PlayerColor color) throws GooseGameException
     {
+        if( color == null )
+        {
+            throw new GooseGameException("Impossible de créer le joueur avec cette couleur");
+        }
         this.color = color;
         this.numPlayer = num;
         this.position = 0;

@@ -1,6 +1,5 @@
 package heb.esi.goosegame.model;
 
-
 import heb.esi.goosegame.controler.Controller;
 import java.util.ArrayList;
 
@@ -11,6 +10,7 @@ import javafx.util.Pair;
  * @author nosa
  */
 public class Game {
+
     private final Controller controler; // Controleur
     private final Board board; // Plateau du jeu
     private final ArrayList<Player> players; // Liste des joueurs
@@ -30,19 +30,21 @@ public class Game {
         this.gameState = GameState.NOTSTARTED;
         this.dices = new Dices(2, 6);
         this.dicesRolled = false;
-        this.activePlayerNextPos = -1;      
+        this.activePlayerNextPos = -1;
     }
 
     /**
      * Retourne une liste des indices des cases spéciales avec leur type.
+     *
      * @return liste des indindices des cases spéciales avec leur type.
      */
     public ArrayList<Pair<Integer, CaseType>> getSpecialCases() {
         return this.board.getSpecialCases();
     }
-    
+
     /**
      * Ajoute un joueur de la couleur passée en paramètre à la partie.
+     *
      * @param col
      * @throws heb.esi.goosegame.model.GooseGameException
      */
@@ -83,9 +85,10 @@ public class Game {
     }
 
     /**
-     * Déplacer le joueur actif en le déplacant à la position passée en paramètre
-     * (normalement la même que this.activePlayerNextPos calculé après le lancé
-     * de dés).
+     * Déplacer le joueur actif en le déplacant à la position passée en
+     * paramètre (normalement la même que this.activePlayerNextPos calculé après
+     * le lancé de dés).
+     *
      * @param position
      * @throws heb.esi.goosegame.model.GooseGameException
      */
@@ -98,39 +101,39 @@ public class Game {
         if (position != this.activePlayerNextPos) {
             throw new GooseGameException("Déplacement non autorisé");
         }
-        
+
         Player p = this.players.get(this.currentPlayer);
-        
+
         // On change la variable pour indiquer que le joueur suivant peut lancer
         // les dés.
         this.dicesRolled = false;
-        
+
         // Si c'est le premier tour, le joueur fait un déplacement spécial avec
         // certaines combinaisons de dé (voir règles).
         if (p.position() == 0) {
-            if (position == 6 || position == 6) {
-                if (position == 3 || position == 3) {
+            if (dices.diceValue(0) == 6 || dices.diceValue(1) == 6) {
+                if (dices.diceValue(0) == 3 || dices.diceValue(1) == 3) {
                     position = 26;
                 }
             }
-            if (position == 4 || position == 4) {
-                if (position == 5 || position == 5) {
+            if (dices.diceValue(0) == 4 || dices.diceValue(1) == 4) {
+                if (dices.diceValue(0) == 5 || dices.diceValue(1) == 5) {
                     position = 53;
                 }
             }
         }
-        
+
         // On récupère la case sur laquelle le joueur est arrivé
         Case c = movePlayer(p, position);
-        
+
         if (c.type() != CaseType.END) { // Si on est pas arrivé à la fin, on regarde sur quelle case on est tombé
-            
+
             p.setStuck(c.type().stuck()); // On coince le joueur pour x tours (en fonction de la case, les cases ne coincant pas le joueur laisse la valeur à 0)
-            
-            if (c.type() == CaseType.JAIL) { 
+
+            if (c.type() == CaseType.JAIL) {
                 p.setJail(); // S'il s'agit de la case prison on met le joueur en prison
             }
-            
+
             if (c.type().move()) { // S'il s'agit d'une case qui déplace le joueur ...
                 if (c.type().exit() != -1) { // On double son déplacement s'il s'agit d'une oie
                     movePlayer(p, c.type().exit());
@@ -151,11 +154,11 @@ public class Game {
                     nextPlayerFound = true;
                 }
             } while (!nextPlayerFound);
-            
+
         } else { // Si on est arrivé à la fin, c'est la fin du jeu
             this.gameState = GameState.OVER;
         }
-            
+
         updateViews();
     }
 
@@ -173,20 +176,20 @@ public class Game {
         }
         this.dices.roll();
         this.dicesRolled = true;
-        
+
         // On calcule la prochaine position du joueur actif et on la stocke dans
         // activePlayerNextPos
         Player p = this.players.get(currentPlayer);
-        
+
         this.activePlayerNextPos = p.position() + this.dices.sum();
 
         if (this.activePlayerNextPos > 63) {
             this.activePlayerNextPos = 63 - (this.activePlayerNextPos - 63);
         }
-        
+
         updateViews();
     }
-    
+
     /**
      * Retourne la position de la case suivante sur lequel le joueur actif doit
      * se déplacer
@@ -215,6 +218,7 @@ public class Game {
 
     /**
      * Début la partie.
+     *
      * @throws heb.esi.goosegame.model.GooseGameException
      */
     public void start() throws GooseGameException {
@@ -230,9 +234,10 @@ public class Game {
         // On met à jour les vues
         updateViews();
     }
-    
+
     /**
      * Vérifie que le nombre de joueur soit correct.
+     *
      * @throws heb.esi.goosegame.model.GooseGameException
      */
     public void checkPlayers() throws GooseGameException {
@@ -240,44 +245,47 @@ public class Game {
             throw new GooseGameException("Nombre de joueurs incorrects : entre 2 et 8 compris.");
         }
     }
-    
+
     /**
      * Retourne la somme des dés.
+     *
      * @return somme des deux dés
      */
     public int getDicesSum() {
         return this.dices.sum();
     }
-    
+
     /**
      * Retourne la liste des couleurs des joueurs associés à leur position.
      */
     public ArrayList<Pair<PlayerColor, Integer>> getPlayerPos() {
         ArrayList<Pair<PlayerColor, Integer>> players = new ArrayList<>();
-        
-        for(int i=0; i<this.players.size(); i++) {
+
+        for (int i = 0; i < this.players.size(); i++) {
             players.add(new Pair<>(this.players.get(i).color(), this.players.get(i).position()));
         }
-        
+
         return players;
     }
-    
+
     /**
      * Retourne la couleur du joueur actuel.
+     *
      * @return couleur du joueur actif
      */
     public PlayerColor getCurrentPlayerColor() {
         return this.players.get(this.currentPlayer).color();
     }
-    
+
     /**
      * Retourne l'état actuel de la partie.
+     *
      * @return état de la partie
      */
     public GameState getGameState() {
         return this.gameState;
     }
-    
+
     /**
      * Met à joueur les vues du controleur.
      */

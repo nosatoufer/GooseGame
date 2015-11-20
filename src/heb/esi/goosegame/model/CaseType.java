@@ -6,16 +6,16 @@ package heb.esi.goosegame.model;
  */
 public enum CaseType
 {
-    START("Case de départ", 0, 0, false, 0),
-    EMPTY("Case vide", 1, 0, false, 0),
-    GOOSE("Case d'oie", 2, 0, true, -1),
-    JAIL("Case prison", 3, 0, false, 0),
-    INN("Case auberge", 4, 1, false, 0),
-    WELL("Case puits", 5, 2, false, 0),
-    BRIDGE("Case pont", 6, 0, true, 20),
-    MAZE("Case labyrinthe", 7, 0, true, 30),
-    DEATH("Case mort", 8, 0, true, 0),
-    END("Case finale", 9, 0, false, 0);
+    START("Start", 0, 0, false, 0),
+    EMPTY("", 1, 0, false, 0),
+    GOOSE("Goose", 2, 0, true, -1),
+    JAIL("Jail", 3, 0, false, 0),
+    INN("Inn", 4, 1, false, 0),
+    WELL("Well", 5, 2, false, 0),
+    BRIDGE("Bridge", 6, 0, true, 20),
+    MAZE("Maze", 7, 0, true, 30),
+    DEATH("Death", 8, 0, true, 0),
+    END("End", 9, 0, false, 0);
     
     private final String desc;
     private final int value;

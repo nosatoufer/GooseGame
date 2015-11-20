@@ -18,46 +18,46 @@ import javafx.scene.text.Text;
 
 /**
  *
- * Classe représentant une case dans l'interface graphique. 
- * Il s'agit d'un Java Bean qui prévient ses listeners lorsque la couleur du joueur présent
- * sur sa case change.
- * La case peut être "allumée" (jaune) lorsqu'elle recquire une interaction de
- * la part de l'utilisateur (bouger son pion par exemple).
- * 
+ * Classe représentant une case dans l'interface graphique. Il s'agit d'un Java
+ * Bean qui prévient ses listeners lorsque la couleur du joueur présent sur sa
+ * case change. La case peut être "allumée" (jaune) lorsqu'elle requiert une
+ * interaction de la part de l'utilisateur (bouger son pion par exemple).
+ *
  * @author Maxime
  */
 public class CaseView extends Parent implements Serializable {
+
     Controller controler;
-    
+
     // Numéro de la case
     private final int pos;
-    
+
     // Coordonées graphiques de la case sur le plateau :
     private final int x; // Abscisse
     private final int y; // Ordonnée
-    
+
     // Elements graphiques composants la case :
     private final Rectangle fond;
     private final Text caseTypeText; // Label décrivant l'effet de la case
     private final Text posText; // Label indiquant le numéro de la case
     private final Rectangle player; // Element permettant d'afficher le joueur sur la case
-    
+
     protected ObjectProperty<PlayerColor> playerColor; // Couleur du joueur présent sur la case
-    
+
     public CaseView(Controller controler, int pos, int x, int y) {
         this.controler = controler;
-        
+
         this.pos = pos;
-        
+
         this.x = x;
         this.y = y;
-        
+
         // Propriété prise en compte par le bean (couleur du joueur présent
         // sur la case)
         this.playerColor = new ObjectPropertyBase<PlayerColor>(null) {
             @Override
             public Object getBean() {
-                 return this;
+                return this;
             }
 
             @Override
@@ -65,20 +65,19 @@ public class CaseView extends Parent implements Serializable {
                 return "Color property";
             }
         };
- 
-        
+
         // Ajout de la couleur de fond de la case
-        this.fond = new Rectangle(75,75,Color.WHITE);
+        this.fond = new Rectangle(75, 75, Color.WHITE);
         this.fond.setArcHeight(10);
         this.fond.setArcWidth(10);
         this.getChildren().add(this.fond);
-        
+
         // Création du rectangle représentant le pion d'un futur joueur sur la case
-        this.player = new Rectangle(10,10,Color.WHITE);
+        this.player = new Rectangle(10, 10, Color.WHITE);
         this.player.setX(60);
         this.player.setY(60);
         this.getChildren().add(this.player);
-        
+
         // Ajout du type de la case sur cette dernière
         this.caseTypeText = new Text("");
         this.caseTypeText.setFont(new Font(15));
@@ -86,7 +85,7 @@ public class CaseView extends Parent implements Serializable {
         this.caseTypeText.setX(10);
         this.caseTypeText.setY(35);
         this.getChildren().add(this.caseTypeText);
-        
+
         // Création et ajout du numéro de la case sur cette dernière
         this.posText = new Text(Integer.toString(pos));
         this.posText.setFont(new Font(15));
@@ -94,15 +93,15 @@ public class CaseView extends Parent implements Serializable {
         this.posText.setX(10);
         this.posText.setY(20);
         this.getChildren().add(this.posText);
-        
+
         // Positionnement de la case sur le plateau
         this.setTranslateX(this.x);
         this.setTranslateY(this.y);
-        
+
         // Implémentation de l'action qui a lieu lorsqu'on clique sur la case
         // (pour déplacer son joueur normalement)
-        this.setOnMouseClicked(new EventHandler<MouseEvent>(){
-            public void handle(MouseEvent me){
+        this.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            public void handle(MouseEvent me) {
                 try {
                     // On fait appel au controleur pour déplacer le joueur
                     controler.movePlayerToPos(pos);
@@ -116,39 +115,11 @@ public class CaseView extends Parent implements Serializable {
             }
         });
     }
-    
+
     public void setType(CaseType type) {
-        switch (type) {
-            case GOOSE:
-                this.caseTypeText.setText("Goose");
-            break;
-            case BRIDGE:
-                this.caseTypeText.setText("Bridge");
-            break;
-            case INN:
-                this.caseTypeText.setText("Inn");
-            break;
-            case WELL:
-                this.caseTypeText.setText("Well");
-            break;
-            case MAZE:
-                this.caseTypeText.setText("Maze");
-            break;
-            case JAIL:
-                this.caseTypeText.setText("Jail");
-            break;
-            case DEATH:
-                this.caseTypeText.setText("Death");
-            break;
-            case START:
-                this.caseTypeText.setText("Start");
-            break;
-            case END:
-                this.caseTypeText.setText("End");
-            break;
-        }
+        this.caseTypeText.setText(type.desc());
     }
-    
+
     /**
      * On "allume" la case pour signaler au joueur qu'il doit déplacer son pion
      * sur cette case.
@@ -156,63 +127,58 @@ public class CaseView extends Parent implements Serializable {
     public void turnOn() {
         this.fond.setFill(Color.YELLOW);
     }
-    
+
     /**
      * On "éteind" la case lorsque la case a été cliquée
      */
     public void turnOff() {
         this.fond.setFill(Color.WHITE);
     }
-    
+
     /**
      * Retourne la couleur du joueur présent sur la case
+     *
      * @return Couleur du joueur présent sur la case
      */
     public final PlayerColor getPlayerColor() {
         return this.playerColor.get();
     }
-     
+
     /**
      * On place le joueur de couleur color sur la case
+     *
      * @param color
      */
-    public final void setPlayerColor(PlayerColor color){
+    public final void setPlayerColor(PlayerColor color) {
         this.playerColor.set(color);
-        
+
         if (color != null) {
+            player.setStroke(Color.BLACK);
             switch (color) {
                 case GREEN:
                     player.setFill(Color.GREEN);
-                    player.setStroke(Color.BLACK);
-                break;
+                    break;
                 case PINK:
                     player.setFill(Color.PINK);
-                    player.setStroke(Color.BLACK);
-                break;
+                    break;
                 case BLUE:
                     player.setFill(Color.BLUE);
-                    player.setStroke(Color.BLACK);
-                break;
+                    break;
                 case YELLOW:
                     player.setFill(Color.YELLOW);
-                    player.setStroke(Color.BLACK);
-                break;
+                    break;
                 case PURPLE:
                     player.setFill(Color.PURPLE);
-                    player.setStroke(Color.BLACK);
-                break;
+                    break;
                 case RED:
                     player.setFill(Color.RED);
-                    player.setStroke(Color.BLACK);
-                break;
+                    break;
                 case BLACK:
                     player.setFill(Color.BLACK);
-                    player.setStroke(Color.BLACK);
-                break;
+                    break;
                 case WHITE:
                     player.setFill(Color.WHITE);
-                    player.setStroke(Color.BLACK);
-                break;
+                    break;
             }
         } else {
             player.setFill(Color.WHITE);
@@ -221,10 +187,12 @@ public class CaseView extends Parent implements Serializable {
     }
 
     /**
-     * Méthode du beans permettant d'attacher un listener sur l'attribut PlayerColor
+     * Méthode du beans permettant d'attacher un listener sur l'attribut
+     * PlayerColor
+     *
      * @return ObjectProperty
      */
-    public final ObjectProperty<PlayerColor> playerColorProperty(){
+    public final ObjectProperty<PlayerColor> playerColorProperty() {
         return this.playerColor;
     }
 }
