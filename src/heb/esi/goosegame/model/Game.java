@@ -108,21 +108,6 @@ public class Game {
         // les dés.
         this.dicesRolled = false;
 
-        // Si c'est le premier tour, le joueur fait un déplacement spécial avec
-        // certaines combinaisons de dé (voir règles).
-        if (p.position() == 0) {
-            if (dices.diceValue(0) == 6 || dices.diceValue(1) == 6) {
-                if (dices.diceValue(0) == 3 || dices.diceValue(1) == 3) {
-                    position = 26;
-                }
-            }
-            if (dices.diceValue(0) == 4 || dices.diceValue(1) == 4) {
-                if (dices.diceValue(0) == 5 || dices.diceValue(1) == 5) {
-                    position = 53;
-                }
-            }
-        }
-
         // On récupère la case sur laquelle le joueur est arrivé
         Case c = movePlayer(p, position);
 
@@ -182,6 +167,19 @@ public class Game {
         Player p = this.players.get(currentPlayer);
 
         this.activePlayerNextPos = p.position() + this.dices.sum();
+
+        if (p.position() == 0) {
+            if (dices.diceValue(0) == 6 || dices.diceValue(1) == 6) {
+                if (dices.diceValue(0) == 3 || dices.diceValue(1) == 3) {
+                    this.activePlayerNextPos = 26;
+                }
+            }
+            if (dices.diceValue(0) == 4 || dices.diceValue(1) == 4) {
+                if (dices.diceValue(0) == 5 || dices.diceValue(1) == 5) {
+                    this.activePlayerNextPos = 53;
+                }
+            }
+        }
 
         if (this.activePlayerNextPos > 63) {
             this.activePlayerNextPos = 63 - (this.activePlayerNextPos - 63);
@@ -257,12 +255,13 @@ public class Game {
 
     /**
      * Retourne la liste des couleurs des joueurs associés à leur position.
+     * @return 
      */
     public ArrayList<Pair<PlayerColor, Integer>> getPlayerPos() {
         ArrayList<Pair<PlayerColor, Integer>> players = new ArrayList<>();
 
-        for (int i = 0; i < this.players.size(); i++) {
-            players.add(new Pair<>(this.players.get(i).color(), this.players.get(i).position()));
+        for (Player player : this.players) {
+            players.add(new Pair<>(player.color(), player.position()));
         }
 
         return players;

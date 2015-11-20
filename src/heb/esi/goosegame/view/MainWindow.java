@@ -111,7 +111,7 @@ public class MainWindow extends Parent implements View {
                 // Action : demande la liste de joueurs qui joue à la partie
                 PlayerChoice playerChoice = new PlayerChoice(mainStage, controller);
                 // Désactive son MenuItem
-                addPlayer.setDisable(true);
+                //addPlayer.setDisable(true);
                 // Active le MenuItem permettant de commencer la partie
                 startGame.setDisable(false);
             }
