@@ -2,9 +2,10 @@ package heb.esi.goosegame.view;
 
 import heb.esi.goosegame.controler.Controller;
 import heb.esi.goosegame.model.GooseGameException;
-import heb.esi.goosegame.model.PlayerColor;
 
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -22,6 +23,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -109,11 +111,9 @@ public class MainWindow extends Parent implements View {
         this.addPlayer.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent t) {
                 // Action : demande la liste de joueurs qui joue à la partie
-                PlayerChoice playerChoice = new PlayerChoice(mainStage, controller);
+                PlayerChoice playerChoice = new PlayerChoice(getObject(), controller);
                 // Désactive son MenuItem
                 //addPlayer.setDisable(true);
-                // Active le MenuItem permettant de commencer la partie
-                startGame.setDisable(false);
             }
         });
         this.menuGame.getItems().addAll(addPlayer);
@@ -122,23 +122,11 @@ public class MainWindow extends Parent implements View {
         this.startGame.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent t) {
                 // Action :
-                try {
-                    controller.startGame(); // On débute la partie
-                    startGame.setDisable(true); // On désactive le MenuItem
-                    throwDicesButton.setDisable(false);
-                } catch (GooseGameException ex) {
-                    // Si une erreur survient au début la partie, on affiche un
-                    // message d'erreur.
-                    Alert alert = new Alert(Alert.AlertType.ERROR);
-                        alert.setTitle("Erreur lors du début de la partie");
-                        alert.setHeaderText(null);
-                        alert.setContentText(ex.getMessage());
-
-                        alert.showAndWait();
-                }
+                startGame();
+                startGame.setDisable(true);
+                throwDicesButton.setDisable(false);
             }
         });
-        this.startGame.setDisable(true);
         this.menuGame.getItems().addAll(startGame);
         
         // Ajout des menu à la barre des menus
@@ -213,6 +201,30 @@ public class MainWindow extends Parent implements View {
         this.mainGroup.getChildren().add(borderpane);
         
         this.mainStage.show();
+        
+        // Affiche la fenêtre pour demander les joueurs 
+        PlayerChoice playerChoice = new PlayerChoice(this, controller);
+    }
+    
+    public void startGame() {
+        try {
+            controller.startGame(); // On débute la partie
+        } catch (GooseGameException ex) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Erreur lors du lancement des dés de la partie");
+                alert.setHeaderText(null);
+                alert.setContentText(ex.getMessage());
+
+                alert.showAndWait();
+        }
+    }
+    
+    public Stage getStage() {
+        return this.mainStage;
+    }
+    
+    public MainWindow getObject() {
+        return this;
     }
     
     /**
@@ -221,8 +233,8 @@ public class MainWindow extends Parent implements View {
     @Override
     public void refresh() {
         // On met à jour la position des joueurs sur le plateau
-        ArrayList<Pair<PlayerColor,Integer>> players = this.controller.getPlayerPos();
-        for (Pair<PlayerColor, Integer> player : players) {
+        ArrayList<Pair<Color,Integer>> players = this.controller.getPlayerPos();
+        for (Pair<Color, Integer> player : players) {
             this.board.updatePlayer(player.getKey(), player.getValue());
         }
         

@@ -45,20 +45,21 @@ public class Game {
     /**
      * Ajoute un joueur de la couleur passée en paramètre à la partie.
      *
-     * @param col
+     * @param name
+     * @param color
      * @throws heb.esi.goosegame.model.GooseGameException
      */
-    public void addPlayer(PlayerColor col) throws GooseGameException {
-        if (this.gameState != GameState.NOTSTARTED) {
+    public void addPlayer(String name, String color) throws GooseGameException {
+        if (this.gameState != GameState.STARTED && this.gameState != GameState.NOTSTARTED) {
             throw new GooseGameException("Création de joueur impossible, la partie a déjà commencée.");
         }
         if (this.players.size() > 8) {
             throw new GooseGameException("Création de joueur impossible, le nombre limite (8) a été atteint.");
         }
-        if (!checkColor(col)) {
-            throw new GooseGameException("Création de joueur impossible, un joueur de cette couleur existe déjà.");
+        if (!this.checkPlayer(name, color)) {
+            throw new GooseGameException("Création de joueur impossible, un joueur de cette couleur ou de ce nom existe déjà dans la partie.");
         }
-        this.players.add(new Player(this.players.size(), col));
+        this.players.add(new Player(name, color));
     }
 
     /**
@@ -205,11 +206,15 @@ public class Game {
     /**
      * Vérifie si un joueur de la même couleur est déjà inscrit dans la partie.
      */
-    private boolean checkColor(PlayerColor col) {
+    private boolean checkPlayer(String name, String color) {
         boolean ok = true;
         int i = 0;
         while (ok && i < this.players.size()) {
-            ok = this.players.get(i++).color() != col;
+            ok = !this.players.get(i).getColor().equals(color);
+            if (ok) {
+                ok = !this.players.get(i).getName().equals(name);
+            }
+            i++;
         }
         return ok;
     }
@@ -257,11 +262,11 @@ public class Game {
      * Retourne la liste des couleurs des joueurs associés à leur position.
      * @return 
      */
-    public ArrayList<Pair<PlayerColor, Integer>> getPlayerPos() {
-        ArrayList<Pair<PlayerColor, Integer>> players = new ArrayList<>();
+    public ArrayList<Pair<String, Integer>> getPlayerPos() {
+        ArrayList<Pair<String, Integer>> players = new ArrayList<>();
 
         for (Player player : this.players) {
-            players.add(new Pair<>(player.color(), player.position()));
+            players.add(new Pair<>(player.getColor(), player.position()));
         }
 
         return players;
@@ -272,8 +277,8 @@ public class Game {
      *
      * @return couleur du joueur actif
      */
-    public PlayerColor getCurrentPlayerColor() {
-        return this.players.get(this.currentPlayer).color();
+    public String getCurrentPlayerColor() {
+        return this.players.get(this.currentPlayer).getColor();
     }
 
     /**

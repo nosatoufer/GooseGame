@@ -6,8 +6,8 @@ package heb.esi.goosegame.model;
  * @author nosa
  */
 public class Player {
-    private final int numPlayer;
-    private final PlayerColor color;
+    private String name;
+    private String color;
     private int position;
     private int lastPosition;
     private int stuck;
@@ -15,18 +15,17 @@ public class Player {
     
     /**
      *
-     * @param num
+     * @param name
      * @param color
      * @throws GooseGameException
      */
-    public Player(int num, PlayerColor color) throws GooseGameException
+    public Player(String name, String color) throws GooseGameException
     {
-        if( color == null )
-        {
-            throw new GooseGameException("Impossible de créer le joueur avec cette couleur");
+        if (name == null) {
+            throw new GooseGameException("Création de joueur impossible : paramètre manquant");
         }
+        this.name = name;
         this.color = color;
-        this.numPlayer = num;
         this.position = 0;
         this.lastPosition = 0;
         this.stuck = 0;
@@ -106,15 +105,12 @@ public class Player {
         this.jail = !this.jail;
     }
     
-    /**
-     * Return the player number
-     * @return numPlayer the player number
-     */
-    public int numPlayer()
+    public String getName()
     {
-        return this.numPlayer;
+        return this.name;
     }
-    public PlayerColor color()
+    
+    public String getColor()
     {
         return this.color;
     }
@@ -122,7 +118,7 @@ public class Player {
     @Override
     public String toString()
     {
-        String s = this.color.toString();
+        String s = this.getName();
         return s;
     }
 }
