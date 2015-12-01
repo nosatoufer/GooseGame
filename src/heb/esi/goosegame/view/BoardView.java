@@ -2,7 +2,6 @@ package heb.esi.goosegame.view;
 
 import heb.esi.goosegame.controler.Controller;
 import heb.esi.goosegame.model.CaseType;
-import heb.esi.goosegame.model.PlayerColor;
 import java.io.Serializable;
 import java.util.ArrayList;
 import javafx.beans.property.BooleanProperty;
@@ -61,9 +60,9 @@ public class BoardView extends Parent implements Serializable {
             // se sera déplacé on peut changer la valeur de playerMoved pour indiquer
             // à nos listener (notamment la fenêtre principale) qu'un déplacement vient
             // d'avoir lieu.
-            this.cases[i].playerColorProperty().addListener(new ChangeListener<PlayerColor>() {
+            this.cases[i].playerColorProperty().addListener(new ChangeListener<Color>() {
                 @Override
-                public void changed(ObservableValue<? extends PlayerColor> ov, PlayerColor t, PlayerColor t1) {
+                public void changed(ObservableValue<? extends Color> ov, Color t, Color t1) {
                     setPlayerMoved(true);
                 }
             });
@@ -83,12 +82,14 @@ public class BoardView extends Parent implements Serializable {
      * @param color
      * @param pos
      */
-    public void updatePlayer(PlayerColor color, int pos) {
+    public void updatePlayer(Color color, int pos) {
         // On efface son ancien pion s'il est déjà affiché (en parcourant le tableau) :
         for (int i=0; i<64; ++i) {
-            if (this.cases[i].getPlayerColor() == color) {
-                this.cases[i].setPlayerColor(null);
-                break;
+            if (this.cases[i].getPlayerColor() != null) {
+                if (this.cases[i].getPlayerColor().toString().equals(color.toString())) {
+                    this.cases[i].setPlayerColor(null);
+                    break;
+                }
             }
         }
         

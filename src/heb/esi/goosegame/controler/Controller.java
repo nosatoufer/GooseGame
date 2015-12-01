@@ -3,10 +3,10 @@ package heb.esi.goosegame.controler;
 import heb.esi.goosegame.model.CaseType;
 import heb.esi.goosegame.model.Game;
 import heb.esi.goosegame.model.GameState;
-import heb.esi.goosegame.model.PlayerColor;
 import heb.esi.goosegame.model.GooseGameException;
 import heb.esi.goosegame.view.View;
 import java.util.ArrayList;
+import javafx.scene.paint.Color;
 import javafx.util.Pair;
 
 /**
@@ -38,9 +38,14 @@ public class Controller {
         this.game = new Game(this);
     }
     
-    public void newPlayer(PlayerColor c) throws GooseGameException
+    /*public void newPlayer(PlayerColor c) throws GooseGameException
     {
         this.game.addPlayer(c);
+    }*/
+    
+    public void newPlayer(String name, Color c) throws GooseGameException
+    {
+        this.game.addPlayer(name, c.toString());
     }
     
     public void movePlayerToPos(int pos) throws GooseGameException
@@ -68,8 +73,16 @@ public class Controller {
         return this.game.getNextCaseToMove();
     }
     
-    public ArrayList<Pair<PlayerColor, Integer>> getPlayerPos() {
-        return this.game.getPlayerPos();
+    public ArrayList<Pair<Color, Integer>> getPlayerPos() {
+        
+        ArrayList<Pair<Color, Integer>> convertedPlayers = new ArrayList<>();
+        ArrayList<Pair<String, Integer>> players = this.game.getPlayerPos();
+
+        for (Pair<String, Integer> player : players) {
+            convertedPlayers.add(new Pair<>(Color.valueOf(player.getKey()), player.getValue()));
+        }
+        
+        return convertedPlayers;
     }
     
     public boolean isGameStarted() {
@@ -84,8 +97,8 @@ public class Controller {
         return game.getDicesSum();
     }
     
-    public PlayerColor getCurrentPlayerColor() {
-        return game.getCurrentPlayerColor();
+    public Color getCurrentPlayerColor() {
+        return Color.valueOf(game.getCurrentPlayerColor());
     }
     
     public ArrayList<Pair<Integer, CaseType>> getSpecialCases() {

@@ -3,7 +3,6 @@ package heb.esi.goosegame.view;
 import heb.esi.goosegame.controler.Controller;
 import heb.esi.goosegame.model.CaseType;
 import heb.esi.goosegame.model.GooseGameException;
-import heb.esi.goosegame.model.PlayerColor;
 import java.io.Serializable;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ObjectPropertyBase;
@@ -42,7 +41,7 @@ public class CaseView extends Parent implements Serializable {
     private final Text posText; // Label indiquant le numéro de la case
     private final Rectangle player; // Element permettant d'afficher le joueur sur la case
 
-    protected ObjectProperty<PlayerColor> playerColor; // Couleur du joueur présent sur la case
+    protected ObjectProperty<Color> playerColor; // Couleur du joueur présent sur la case
 
     public CaseView(Controller controler, int pos, int x, int y) {
         this.controler = controler;
@@ -54,7 +53,7 @@ public class CaseView extends Parent implements Serializable {
 
         // Propriété prise en compte par le bean (couleur du joueur présent
         // sur la case)
-        this.playerColor = new ObjectPropertyBase<PlayerColor>(null) {
+        this.playerColor = new ObjectPropertyBase<Color>(null) {
             @Override
             public Object getBean() {
                 return this;
@@ -140,7 +139,7 @@ public class CaseView extends Parent implements Serializable {
      *
      * @return Couleur du joueur présent sur la case
      */
-    public final PlayerColor getPlayerColor() {
+    public final Color getPlayerColor() {
         return this.playerColor.get();
     }
 
@@ -149,37 +148,12 @@ public class CaseView extends Parent implements Serializable {
      *
      * @param color
      */
-    public final void setPlayerColor(PlayerColor color) {
+    public final void setPlayerColor(Color color) {
         this.playerColor.set(color);
 
         if (color != null) {
+            player.setFill(color);
             player.setStroke(Color.BLACK);
-            switch (color) {
-                case GREEN:
-                    player.setFill(Color.GREEN);
-                    break;
-                case PINK:
-                    player.setFill(Color.PINK);
-                    break;
-                case BLUE:
-                    player.setFill(Color.BLUE);
-                    break;
-                case YELLOW:
-                    player.setFill(Color.YELLOW);
-                    break;
-                case PURPLE:
-                    player.setFill(Color.PURPLE);
-                    break;
-                case RED:
-                    player.setFill(Color.RED);
-                    break;
-                case BLACK:
-                    player.setFill(Color.BLACK);
-                    break;
-                case WHITE:
-                    player.setFill(Color.WHITE);
-                    break;
-            }
         } else {
             player.setFill(Color.WHITE);
             player.setStroke(Color.WHITE);
@@ -192,7 +166,7 @@ public class CaseView extends Parent implements Serializable {
      *
      * @return ObjectProperty
      */
-    public final ObjectProperty<PlayerColor> playerColorProperty() {
+    public final ObjectProperty<Color> playerColorProperty() {
         return this.playerColor;
     }
 }
