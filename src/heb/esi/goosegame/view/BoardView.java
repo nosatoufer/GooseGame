@@ -60,10 +60,13 @@ public class BoardView extends Parent implements Serializable {
             // se sera déplacé on peut changer la valeur de playerMoved pour indiquer
             // à nos listener (notamment la fenêtre principale) qu'un déplacement vient
             // d'avoir lieu.
-            this.cases[i].playerColorProperty().addListener(new ChangeListener<Color>() {
+            this.cases[i].playerMovedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue<? extends Color> ov, Color t, Color t1) {
-                    setPlayerMoved(true);
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
+                    // Si un joueur a bougé, on réinitialise la variable du plateau à false
+                    if (t != t1) {
+                        setPlayerMoved(true);
+                    }
                 }
             });
             
@@ -85,16 +88,11 @@ public class BoardView extends Parent implements Serializable {
     public void updatePlayer(Color color, int pos) {
         // On efface son ancien pion s'il est déjà affiché (en parcourant le tableau) :
         for (int i=0; i<64; ++i) {
-            if (this.cases[i].getPlayerColor() != null) {
-                if (this.cases[i].getPlayerColor().toString().equals(color.toString())) {
-                    this.cases[i].setPlayerColor(null);
-                    break;
-                }
-            }
+            this.cases[i].delete(color);
         }
         
         // On recolorie son nouvel emplacement
-        this.cases[pos].setPlayerColor(color);
+        this.cases[pos].addPlayer(color);
     }
     
     /**
@@ -102,8 +100,16 @@ public class BoardView extends Parent implements Serializable {
      */
     public void reset() {
         for (int i=0; i<64; ++i) {
-            this.cases[i].setPlayerColor(null);
+            this.cases[i].deleteAll();
         }
+    }
+    
+    /**
+     * Permet "d'allumer" la case située à la position pos.
+     * @param pos
+     */
+    public void turnOn(int pos) {
+        this.cases[pos].turnOn();
     }
     
     /**
@@ -112,6 +118,17 @@ public class BoardView extends Parent implements Serializable {
      */
     public final void setPlayerMoved(boolean bool){
         this.playerMoved.set(bool);
+    }
+     
+    /**
+     * Permet d'inverser la valeur de playerMoved
+     */
+    public final void switchPlayerMoved(){
+        if (this.playerMoved.get() == true) {
+            this.playerMoved.set(false);
+        } else {
+            this.playerMoved.set(true);
+        }
     }
      
     /**
@@ -128,13 +145,5 @@ public class BoardView extends Parent implements Serializable {
      */
     public final BooleanProperty playerMovedProperty(){
         return this.playerMoved;
-    }
-    
-    /**
-     * Permet "d'allumer" la case située à la position pos.
-     * @param pos
-     */
-    public void turnOn(int pos) {
-        this.cases[pos].turnOn();
     }
 }

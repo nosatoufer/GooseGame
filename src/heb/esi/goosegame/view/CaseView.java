@@ -4,8 +4,11 @@ import heb.esi.goosegame.controler.Controller;
 import heb.esi.goosegame.model.CaseType;
 import heb.esi.goosegame.model.GooseGameException;
 import java.io.Serializable;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.ObjectPropertyBase;
+import java.util.ArrayList;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 
 import javafx.scene.Parent;
@@ -28,9 +31,6 @@ public class CaseView extends Parent implements Serializable {
 
     Controller controler;
 
-    // Numéro de la case
-    private final int pos;
-
     // Coordonées graphiques de la case sur le plateau :
     private final int x; // Abscisse
     private final int y; // Ordonnée
@@ -39,43 +39,44 @@ public class CaseView extends Parent implements Serializable {
     private final Rectangle fond;
     private final Text caseTypeText; // Label décrivant l'effet de la case
     private final Text posText; // Label indiquant le numéro de la case
-    private final Rectangle player; // Element permettant d'afficher le joueur sur la case
+    private final ArrayList<CustomRectangle> players; // Element permettant d'afficher le joueur sur la case
 
-    protected ObjectProperty<Color> playerColor; // Couleur du joueur présent sur la case
+    protected BooleanProperty playerMoved;
 
     public CaseView(Controller controler, int pos, int x, int y) {
         this.controler = controler;
 
-        this.pos = pos;
-
         this.x = x;
         this.y = y;
-
-        // Propriété prise en compte par le bean (couleur du joueur présent
-        // sur la case)
-        this.playerColor = new ObjectPropertyBase<Color>(null) {
-            @Override
-            public Object getBean() {
-                return this;
-            }
-
-            @Override
-            public String getName() {
-                return "Color property";
-            }
-        };
 
         // Ajout de la couleur de fond de la case
         this.fond = new Rectangle(75, 75, Color.WHITE);
         this.fond.setArcHeight(10);
         this.fond.setArcWidth(10);
         this.getChildren().add(this.fond);
+        
+        this.playerMoved = new SimpleBooleanProperty(false);
 
-        // Création du rectangle représentant le pion d'un futur joueur sur la case
-        this.player = new Rectangle(10, 10, Color.WHITE);
-        this.player.setX(60);
-        this.player.setY(60);
-        this.getChildren().add(this.player);
+        // Ajout des cases de joueurs
+        this.players = new ArrayList<>();
+        for (int i=0; i<8; i++) {
+            this.players.add(new CustomRectangle(10, 10, Color.TRANSPARENT));
+            this.players.get(i).setX(10+(15*(i%4)));
+            if (i<4) {
+                this.players.get(i).setY(60);
+            } else {
+                this.players.get(i).setY(45);
+            }
+            this.players.get(i).colorProperty().addListener(new ChangeListener<Color>() {
+                @Override
+                public void changed(ObservableValue<? extends Color> ov, Color t, Color t1) {
+                    if (t != t1) {
+                        switchPlayerMoved();
+                    }
+                }
+            });
+            this.getChildren().add(this.players.get(i));
+        }
 
         // Ajout du type de la case sur cette dernière
         this.caseTypeText = new Text("");
@@ -100,6 +101,7 @@ public class CaseView extends Parent implements Serializable {
         // Implémentation de l'action qui a lieu lorsqu'on clique sur la case
         // (pour déplacer son joueur normalement)
         this.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
             public void handle(MouseEvent me) {
                 try {
                     // On fait appel au controleur pour déplacer le joueur
@@ -133,40 +135,73 @@ public class CaseView extends Parent implements Serializable {
     public void turnOff() {
         this.fond.setFill(Color.WHITE);
     }
-
-    /**
-     * Retourne la couleur du joueur présent sur la case
-     *
-     * @return Couleur du joueur présent sur la case
-     */
-    public final Color getPlayerColor() {
-        return this.playerColor.get();
-    }
-
-    /**
-     * On place le joueur de couleur color sur la case
-     *
-     * @param color
-     */
-    public final void setPlayerColor(Color color) {
-        this.playerColor.set(color);
-
-        if (color != null) {
-            player.setFill(color);
-            player.setStroke(Color.BLACK);
-        } else {
-            player.setFill(Color.WHITE);
-            player.setStroke(Color.WHITE);
+    
+    public void delete(Color color) {
+        for (CustomRectangle player : this.players) {
+            if (player.getColor().equals(color) && (!player.getColor().equals(Color.TRANSPARENT))) {
+                player.setColor(Color.TRANSPARENT);
+            }
         }
     }
-
+    
+    public boolean isPresent(Color color) {
+        for (CustomRectangle rect : this.players) {
+            if (rect.getColor().equals(color)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public void deleteAll() {
+        for (CustomRectangle rect : this.players) {
+            rect.setColor(Color.TRANSPARENT);
+        }
+    }
+    
+    public void addPlayer(Color color) {
+        if (!this.isPresent(color)) {
+            for (CustomRectangle rect : this.players) {
+                if (rect.getColor().equals(Color.TRANSPARENT)) {
+                    rect.setColor(color);
+                    break;
+                }
+            }
+        }
+    }
+    
     /**
-     * Méthode du beans permettant d'attacher un listener sur l'attribut
-     * PlayerColor
-     *
-     * @return ObjectProperty
+     * Permet de modifier l'attribut playerMoved du Bean.
+     * @param bool
      */
-    public final ObjectProperty<Color> playerColorProperty() {
-        return this.playerColor;
+    public final void setPlayerMoved(boolean bool){
+        this.playerMoved.set(bool);
+    }
+     
+    /**
+     * Permet d'inverser la valeur de playerMoved
+     */
+    public final void switchPlayerMoved(){
+        if (this.playerMoved.get() == true) {
+            this.playerMoved.set(false);
+        } else {
+            this.playerMoved.set(true);
+        }
+    }
+    
+    /**
+     * Permet d'accéder à l'attribut playerMoved du Bean.
+     * @return Est-ce qu'un joueur a bougé ?
+     */
+    public final boolean isPlayerMoved(){
+        return this.playerMoved.get();
+    }
+    
+    /**
+     * Permet d'accrocher un Listener à l'attribut playerMoved du Bean.
+     * @return BooleanProperty
+     */
+    public final BooleanProperty playerMovedProperty(){
+        return this.playerMoved;
     }
 }

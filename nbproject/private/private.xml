@@ -3,9 +3,14 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/HONEY/Desktop/FromUSB/GooseGame_NDUWAYEZU/GooseGame/src/heb/esi/goosegame/view/CaseView.java</file>
-            <file>file:/C:/Users/HONEY/Desktop/FromUSB/GooseGame_NDUWAYEZU/GooseGame/src/heb/esi/goosegame/controler/Controller.java</file>
-            <file>file:/C:/Users/HONEY/Desktop/FromUSB/GooseGame_NDUWAYEZU/GooseGame/src/heb/esi/goosegame/model/Game.java</file>
+            <file>file:/F:/Projects/GooseGame/src/heb/esi/goosegame/view/CaseView.java</file>
+            <file>file:/F:/Projects/GooseGame/src/heb/esi/goosegame/controler/Controller.java</file>
+            <file>file:/F:/Projects/GooseGame/src/heb/esi/goosegame/model/Player.java</file>
+            <file>file:/F:/Projects/GooseGame/src/heb/esi/goosegame/model/Game.java</file>
+            <file>file:/F:/Projects/GooseGame/src/heb/esi/goosegame/GooseGame.java</file>
+            <file>file:/F:/Projects/GooseGame/src/heb/esi/goosegame/view/MainWindow.java</file>
+            <file>file:/F:/Projects/GooseGame/src/heb/esi/goosegame/view/BoardView.java</file>
+            <file>file:/F:/Projects/GooseGame/src/heb/esi/goosegame/view/PlayerChoice.java</file>
         </group>
     </open-files>
 </project-private>

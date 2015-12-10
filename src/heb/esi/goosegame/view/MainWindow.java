@@ -4,8 +4,7 @@ import heb.esi.goosegame.controler.Controller;
 import heb.esi.goosegame.model.GooseGameException;
 
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Optional;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -16,7 +15,9 @@ import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
@@ -27,6 +28,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import javafx.util.Pair;
 
 /**
@@ -56,6 +58,9 @@ public class MainWindow extends Parent implements View {
     private final Menu menuFile;
     private final MenuItem newGame;
     private final MenuItem quit;
+    private final Menu menuHelp;
+    private final MenuItem rules;
+    private final MenuItem about;
     private final Menu menuGame;
     private final MenuItem addPlayer;
     private final MenuItem startGame;
@@ -68,6 +73,24 @@ public class MainWindow extends Parent implements View {
         this.mainStage = new Stage();
         this.mainStage.setTitle("Goose Game");
         this.mainStage.setResizable(false);
+        this.mainStage.setOnCloseRequest(new EventHandler<WindowEvent>() { 
+            @Override 
+            public void handle(WindowEvent event) { 
+                if (controller.isGameStarted()) {
+                    Alert alert = new Alert(AlertType.CONFIRMATION);
+                    alert.setTitle("Confirmation");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Voulez vous vraiment quitter la partie en cours ?");
+
+                    Optional<ButtonType> result = alert.showAndWait();
+                    if (result.get() == ButtonType.OK){
+                        mainStage.close();
+                    } else {
+                        event.consume();
+                    }
+                }
+            } 
+        });
         this.mainGroup = new Group();
         this.mainScene = new Scene(this.mainGroup, 835, 650);
         this.mainStage.setScene(this.mainScene);        
@@ -80,35 +103,61 @@ public class MainWindow extends Parent implements View {
         // On ajoute l'item "New Game" au menu "File"
         this.newGame = new MenuItem("New Game");
         this.newGame.setOnAction(new EventHandler<ActionEvent>() {
-            public void handle(ActionEvent t) {
-                // Réinitialise le plateau
-                board.reset();
-                // Crée une nouvelle partie
-                controller.newGame();
-                // Action : désactive et active les boutons correctement
-                startGame.setDisable(true);
-                addPlayer.setDisable(false);
-                dicesSumText.setText("/");
-                playerText.setText("");
-                throwDicesButton.setDisable(true);
+            @Override
+            public void handle(ActionEvent event) {
+                if (controller.isGameStarted()) {
+                    Alert alert = new Alert(AlertType.CONFIRMATION);
+                    alert.setTitle("Confirmation");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Voulez vous vraiment quitter la partie en cours ?");
+
+                    Optional<ButtonType> result = alert.showAndWait();
+                    if (result.get() == ButtonType.OK){
+                        // Réinitialise le plateau
+                        board.reset();
+                        // Crée une nouvelle partie
+                        controller.newGame();
+                        // Action : désactive et active les boutons correctement
+                        startGame.setDisable(true);
+                        addPlayer.setDisable(false);
+                        dicesSumText.setText("/");
+                        playerText.setText("");
+                        throwDicesButton.setDisable(true);
+                    } else {
+                        event.consume();
+                    }
+                }
             }
         });
         this.menuFile.getItems().addAll(newGame);
         // On ajoute l'item "Quit" au menu "File"
         this.quit = new MenuItem("Quit");
         this.quit.setOnAction(new EventHandler<ActionEvent>() {
-            public void handle(ActionEvent t) {
-                // Action : quitte la fenêtre
-                mainStage.close();
+            @Override
+            public void handle(ActionEvent event) {
+                if (controller.isGameStarted()) {
+                    Alert alert = new Alert(AlertType.CONFIRMATION);
+                    alert.setTitle("Confirmation");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Voulez vous vraiment quitter la partie en cours ?");
+
+                    Optional<ButtonType> result = alert.showAndWait();
+                    if (result.get() == ButtonType.OK){
+                        mainStage.close();
+                    } else {
+                        event.consume();
+                    }
+                }
             }
         });
         this.menuFile.getItems().addAll(quit);
- 
+        
         // Menu Game de la barre de menu
         this.menuGame = new Menu("Game");
         // On ajoute l'item "Add players" au menu "Game"
         this.addPlayer = new MenuItem("Add players");
         this.addPlayer.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
             public void handle(ActionEvent t) {
                 // Action : demande la liste de joueurs qui joue à la partie
                 PlayerChoice playerChoice = new PlayerChoice(getObject(), controller);
@@ -120,6 +169,7 @@ public class MainWindow extends Parent implements View {
         // On ajoute l'item "Start Game" au menu "Game"
         this.startGame = new MenuItem("Start game");
         this.startGame.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
             public void handle(ActionEvent t) {
                 // Action :
                 startGame();
@@ -129,8 +179,47 @@ public class MainWindow extends Parent implements View {
         });
         this.menuGame.getItems().addAll(startGame);
         
+        // Menu File de la barre de menu
+        this.menuHelp = new Menu("Help");
+        // On ajoute l'item "Rules" au menu "Help"
+        this.rules = new MenuItem("Rules");
+        this.rules.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Alert alert = new Alert(AlertType.INFORMATION);
+                alert.setTitle("Rules");
+                alert.setHeaderText("Rules of Goose Game");
+                alert.setContentText("Number of goose players : Two or more\n\n"
+                        + "To start : Each player chooses a distinct color and name.\n\n"
+                        + "Goal : The object of the game is to travel along the spiral from field 1 to field 63, and the first player who successfully lands exactly on field 63 is the winner.\n\n"
+                        + "Rules : On each turn, a player rolls the two dice and advances the counter along the spiral by as many fields as the sum of the two dice. The player must deal with any situation on the space landed on, be they hazards or benefits.\n"
+                        + "Two playing pieces may not occupy the same field at the same time. Whenever you land on an occupied field, that player's counter goes back to the space you came from, and you get the vacated space. (In brief, you trade places.)\n"
+                        + "Whenever you land on a field with a goose, you double your move. You must arrive on field 63 by an exact count of the dice. If you overthrow the required number, you must step forward into 63 and then move backwards the surplus number of points. If this lands you on a goose, continue moving backwards the same count again.\n\n"
+                        + "The Special Fields:\n6 The Bridge -- If you land on 6, advance immediately to field 12.\n19 The Inn -- The good food and drink makes you sleepy, and you lose I turn. (Exception: if another player lands at the Inn within the same turn, you change places and you go back to the space that player just came from.)\n"
+                        + "31 The Well -- If you fall in the Well, lose 2 turns—unless another player landing there releases you sooner, sending you back to the field that player just arrived from.\n42 The Maze -- You get lost and go back to field 30\n52 The Prison -- If you land in prison, you stay there until another player landing there relieves you and you go back to that player's last field.\n"
+                        + "58 Death -- Your goose is cooked. Go back to the beginning and start all over."
+                );
+                alert.showAndWait();
+            }
+        });
+        this.menuHelp.getItems().addAll(rules);
+        
+        // On ajoute l'item "About" au menu "Help"
+        this.about = new MenuItem("About");
+        this.about.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Alert alert = new Alert(AlertType.INFORMATION);
+                alert.setTitle("About");
+                alert.setHeaderText("About Goose Game");
+                alert.setContentText("Developped by Maxime Van Damme, Guillaume Du Four and Joselyne Nduwayezu");
+                alert.showAndWait();
+            }
+        });
+        this.menuHelp.getItems().addAll(about);
+        
         // Ajout des menu à la barre des menus
-        this.menuBar.getMenus().addAll(menuFile, menuGame);
+        this.menuBar.getMenus().addAll(menuFile, menuGame, menuHelp);
         
         // Boutons permettabt de lancer les dés
         this.throwDicesButton = new Button();
@@ -176,10 +265,10 @@ public class MainWindow extends Parent implements View {
         this.board.playerMovedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
-                // Si un joueur a bougé, on réinitialise la variable du plateau à false
-                board.setPlayerMoved(false);
-                // On active le bouton pour lancer les dés du prochain joueur
-                throwDicesButton.setDisable(false);
+                if (t != t1) {
+                    // On active le bouton pour lancer les dés du prochain joueur
+                    throwDicesButton.setDisable(false);
+                }
             }
         });
         
