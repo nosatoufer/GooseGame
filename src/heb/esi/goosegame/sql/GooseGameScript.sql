@@ -11,9 +11,9 @@ CREATE TABLE PLAYER(
 
 CREATE TABLE GAME(
 	gId int primary key,
-	gStartDate Date not null,
-	gEndDate Date not null,
 	gWinner String,
+        gName varchar(50),
+        gDesc varchar(400),
         boolean gOver
 );
 
