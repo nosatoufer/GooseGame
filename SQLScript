@@ -1,0 +1,79 @@
+DROP TABLE IF EXISTS Player;
+DROP TABLE IF EXISTS Game;
+DROP TABLE IF EXISTS PlayerInGame;
+
+CREATE TABLE Player
+(
+p_Id INTEGER,
+p_Name VARCHAR(20) UNIQUE,
+p_Win INTEGER DEFAULT 0,
+CONSTRAINT pk_pId PRIMARY KEY (p_Id)
+);
+
+CREATE TABLE Game
+(
+g_Id INTEGER,
+g_Over BOOLEAN DEFAULT FALSE,
+g_Date DATE DEFAULT GETDATE(),
+g_CurrentPlayer INTEGER NOT NULL,
+CONSTRAINT pk_gId PRIMARY KEY (g_Id),
+CONSTRAINT fk_gCurPlayer FOREIGN KEY (g_CurrentPlayer)
+REFERENCES Player(p_Id)
+);
+
+
+CREATE TABLE PlayerInGame
+(
+pg_pId INTEGER,
+pg_gId INTEGER,
+pg_pColor VARCHAR(10),
+pg_pPosition INTEGER,
+CONSTRAINT pk_pgId PRIMARY KEY (pg_gId, pg_pId),
+CONSTRAINT fk_pgPId FOREIGN KEY (pg_pId)
+REFERENCES Player(p_Id),
+CONSTRAINT fk_pgGId FOREIGN KEY (pg_gId)
+REFERENCES Game(g_Id)
+);
+
+
+INSERT INTO Player(p_Id, p_Name, p_Win)
+VALUES (1, "Jean", 2);
+
+INSERT INTO Player(p_Id, p_Name, p_Win)
+VALUES (2, "Max", 0);
+
+INSERT INTO Player(p_Id, p_Name, p_Win)
+VALUES (3, "Guy", 10);
+
+INSERT INTO Player(p_Id, p_Name, p_Win)
+VALUES (4, "Jos", 0);
+
+INSERT INTO GAME(g_Id, g_Over, g_CurrentPlayer)
+VALUES (1, TRUE, 3);
+
+INSERT INT PlayerInGame(pg_pId, pg_gId, pg_pColor, pg_pPosition)
+VALUES (1, 1, "0xABFEC2FF", 30);
+
+INSERT INT PlayerInGame(pg_pId, pg_gId, pg_pColor, pg_pPosition)
+VALUES (2, 1, "0x00FEC2FF", 15);
+
+INSERT INT PlayerInGame(pg_pId, pg_gId, pg_pColor, pg_pPosition)
+VALUES (3, 1, "0xAB00C2FF", 63);
+
+INSERT INT PlayerInGame(pg_pId, pg_gId, pg_pColor, pg_pPosition)
+VALUES (4, 1, "0xABFE00FF", 20);
+
+
+INSERT INTO Game(g_Id, g_CurrentPlayer)
+VALUES (2, 3);
+
+INSERT INT PlayerInGame(pg_pId, pg_gId, pg_pColor, pg_pPosition)
+VALUES (1, 2, "0x00FEC2FF", 15);
+
+INSERT INT PlayerInGame(pg_pId, pg_gId, pg_pColor, pg_pPosition)
+VALUES (2, 2, "0xAB00C2FF", 12);
+
+INSERT INT PlayerInGame(pg_pId, pg_gId, pg_pColor, pg_pPosition)
+VALUES (3, 2, "0xABFE00FF", 17);
+
+
