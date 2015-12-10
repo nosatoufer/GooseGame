@@ -16,9 +16,10 @@ import heb.esi.goosegame.model.Player;
  */
 public class PlayerGameDto {
 
-    private /*Player*/ int pgPlayer;
-    private /*Game*/ int pgGame;
-    private /*PlayerColor*/String pgColor;
+    private final /*Player*/ int pgPlayer;
+    private final /*Game*/ int pgGame;
+    private final /*PlayerColor*/String pgColor;
+    private final int pgPosition;
 
     /**
      * Constructeur de la classe PlayerGameDto.
@@ -26,11 +27,13 @@ public class PlayerGameDto {
      * @param pgPlayer id du joueur pour ce jeu.
      * @param pgGame id du jeu .
      * @param pgColor couleur du joueur
+     * @param position
      */
-    public PlayerGameDto(int pgPlayer, int pgGame, String pgColor) {
+    public PlayerGameDto(int pgPlayer, int pgGame, String pgColor, int position) {
         this.pgPlayer = pgPlayer;
         this.pgGame = pgGame;
         this.pgColor = pgColor;
+        this.pgPosition = position;
     }
     
     /**
@@ -55,5 +58,9 @@ public class PlayerGameDto {
      */
     public String color(){
         return this.pgColor;
+    }
+    
+    public int position(){
+        return this.pgPosition;
     }
 }

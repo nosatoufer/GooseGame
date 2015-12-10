@@ -53,10 +53,11 @@ public class PlayerDB {
     public static int getIdPlayer(String pName) throws DBException {
         int idPlayer = 0;
         try {
-            String query = "SELECT pId FROM PLAYER WHERE pName ='" + pName + "'";
+            String query = "SELECT pId FROM PLAYER WHERE pName = ?";
             java.sql.Connection connexion = DBManager.getConnection();
             java.sql.PreparedStatement stmt;
             stmt = connexion.prepareStatement(query);
+            stmt.setString(1, pName);
             java.sql.ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 idPlayer = rs.getInt("pId");
@@ -77,10 +78,11 @@ public class PlayerDB {
     public static int getNomPlayer(int pId) throws DBException {
         int idPlayer = 0;
         try {
-            String query = "SELECT pId FROM PLAYER WHERE pName ='" + pId + "'";
+            String query = "SELECT pId FROM PLAYER WHERE pName = ?";
             java.sql.Connection connexion = DBManager.getConnection();
             java.sql.PreparedStatement stmt;
             stmt = connexion.prepareStatement(query);
+            stmt.setInt(1, pId);
             java.sql.ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 idPlayer = rs.getInt("pId");
@@ -98,11 +100,12 @@ public class PlayerDB {
      * @param nom le nom du joeuer
      * @return trus si le joueur existe déjà dans la table, false si non
      */
-    public static boolean checkPlayer(String name) throws DBException {
+    public static boolean checkPlayer(String pName) throws DBException {
         try {
-            String query = "SELECT pName FROM PLAYER WHERE pName ='" + name + "' ";
+            String query = "SELECT pName FROM PLAYER WHERE pName = ? ";
             java.sql.Connection connexion = DBManager.getConnection();
             java.sql.PreparedStatement stmt = connexion.prepareStatement(query);
+            stmt.setString(1,pName);
             java.sql.ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
@@ -125,10 +128,13 @@ public class PlayerDB {
     public static void insertPlayer(PlayerDto newPlayer) throws DBException {
         try {
             java.sql.Connection connexion = DBManager.getConnection();
-            Statement insert = connexion.createStatement();
             String query = "INSERT INTO PLAYER (pId, Pname) "
-                    + "VALUES(" + newPlayer.idPlayer()+ ",'" + newPlayer.namePlayer()+ "')";
-            insert.executeUpdate(query);
+                    + "VALUES( ?,?)";
+            
+            java.sql.PreparedStatement stmt = connexion.prepareStatement(query);
+            stmt.setInt(1, newPlayer.idPlayer());
+            stmt.setString(2, newPlayer.namePlayer());
+            stmt.executeUpdate(query);
         } catch (java.sql.SQLException eSQL) {
             throw new DBException("L'ajout du joueur a échoué:\nSQLException: " + eSQL.getMessage());
         }
@@ -143,9 +149,10 @@ public class PlayerDB {
      */
     public static void deletePlayer(PlayerDto delPlayer) throws DBException {
         try {
-            String query = ("DELETE FROM PLAYER" + " WHERE pId =" + delPlayer.idPlayer());
+            String query = ("DELETE FROM PLAYER" + " WHERE pId = ?");
             java.sql.Connection connexion = DBManager.getConnection();
             java.sql.PreparedStatement stmt = connexion.prepareStatement(query);
+            stmt.setInt(1, delPlayer.idPlayer());
             stmt.executeUpdate();
         } catch (SQLException ex) {
             throw new DBException("La suppression du joueur a échoué :\nSQLException: "

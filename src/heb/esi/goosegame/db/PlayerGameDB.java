@@ -24,11 +24,12 @@ public class PlayerGameDB {
         try{
             String query = "SELECT pgPlayer, pgGame, pgColor,gWinner FROM PLAYERGAME"
                     + "JOIN GAME on pgGame = gId"
-                    + "WHERE pId = " + newPlayerGame.player();
+                    + "WHERE pId = ?";
             java.sql.Connection connexion = DBManager.getConnection();
             java.sql.PreparedStatement stmt = connexion.prepareStatement(query);
+            stmt.setInt(1, newPlayerGame.player());
             java.sql.ResultSet rs = stmt.executeQuery();
-            result = (new PlayerGameDto(rs.getInt("pgPlayer"), rs.getInt("pgGame"), rs.getString("pgColor")));
+            result = (new PlayerGameDto(rs.getInt("pgPlayer"), rs.getInt("pgGame"), rs.getString("pgColor"), rs.getInt("pgPosition")));
         }catch(java.sql.SQLException eSQL){
             throw new DBException("accès impossible aux données");
         }
@@ -43,11 +44,14 @@ public class PlayerGameDB {
     public static void insertPlayerGame(PlayerGameDto newPlayerGame) throws DBException{
         try {
             java.sql.Connection connexion = DBManager.getConnection();
-            java.sql.Statement insert = connexion.createStatement();
             String query = "INSERT INTO PLAYERGAME (pgPlayer, pgGame, pgColor) "
                     + "VALUES(" + newPlayerGame.player() + "," + newPlayerGame.game()
                     + "," + "'" + newPlayerGame.color() + "'";
-            insert.executeUpdate(query);
+            java.sql.PreparedStatement stmt = connexion.prepareStatement(query);
+            stmt.setInt(1, newPlayerGame.player());
+            stmt.setInt(2, newPlayerGame.game());
+            stmt.setString(3, newPlayerGame.color());
+            stmt.executeUpdate(query);
         } catch (java.sql.SQLException eSQL) {
             throw new DBException("L'ajout du joueur a échoué:\nSQLException: " + eSQL.getMessage());
         }
@@ -63,9 +67,10 @@ public class PlayerGameDB {
      */
     public static void deletePlayer(PlayerGameDto delPlayer) throws DBException {
         try {
-            String query = ("DELETE FROM PLAYERGAME" + " WHERE pId =" + delPlayer.player());
+            String query = "DELETE FROM PLAYERGAME WHERE pId = ?";
             java.sql.Connection connexion = DBManager.getConnection();
             java.sql.PreparedStatement stmt = connexion.prepareStatement(query);
+            stmt.setInt(1, delPlayer.player());
             stmt.executeUpdate();
         } catch (SQLException ex) {
             throw new DBException("La suppression du joueur a échoué :\nSQLException: "

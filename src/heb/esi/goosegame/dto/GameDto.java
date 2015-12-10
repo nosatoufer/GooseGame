@@ -15,10 +15,11 @@ import heb.esi.goosegame.model.Player;
  */
 public class GameDto {
 
-    private int gId;
-    private Date gStartDate;
-    private Date gEndDate;
-    private /*PlayerColor*/String gWinner;
+    private final int gId;
+    private final Date gStartDate;
+    private final Date gEndDate;
+    private final boolean gOver;
+    private String gWinner;
 
     /**
      * Constructeur de la classe GameDto.
@@ -28,11 +29,12 @@ public class GameDto {
      * @param gDateFin date de fin du jeu.
      * @param gWinner gagnant du jeu
      */
-    public GameDto(int gId, Date gStartDate, Date gEndDate, String gWinner) {
+    public GameDto(int gId, Date gStartDate, Date gEndDate, String gWinner, Boolean over) {
         this.gId = gId;
         this.gStartDate = gStartDate;
         this.gEndDate = gEndDate;
         this.gWinner = gWinner;
+        this.gOver = over;
     }
 
     /**
@@ -63,8 +65,13 @@ public class GameDto {
      * retourne le gagnant du jeu
      * @return  le gagnant du jeu
      */
-    public String wiinnerGame() {
+    public String winnerGame() {
         return this.gWinner;
+    }
+    
+    public boolean isOver()
+    {
+        return gOver;
     }
 
 }

@@ -30,7 +30,7 @@ public class GooseGameDB {
      * @throws DBException si la requête sql a échoué.
      */
     public static Collection<PlayerDto> getAllPlayers() throws DBException {
-        ArrayList<PlayerDto> listPlayers = new ArrayList<PlayerDto>();
+        ArrayList<PlayerDto> listPlayers = new ArrayList<>();
         try {
             String query = "SELECT * From Player";
             java.sql.Connection connexion = DBManager.getConnection();
@@ -56,13 +56,14 @@ public class GooseGameDB {
         PlayerGameDto result;
         try {
             String query = "SELECT pgPlayer, pgGame, pgColor FROM PlayerGame"
-                    + "WHERE pId = '" + pId + "'";
+                    + "WHERE pId = ?";
             java.sql.Connection connexion = DBManager.getConnection();
             java.sql.PreparedStatement stmt = connexion.prepareStatement(query);
+            stmt.setInt(1, pId);
             java.sql.ResultSet rs = stmt.executeQuery();
             // if (rs.next()) {
             result = (new PlayerGameDto(rs.getInt("pgPlayer"), rs.getInt("pgGame"),
-                    rs.getString("pgColor")));
+                    rs.getString("pgColor"), rs.getInt("pgPosition")));
             // }
         } catch (java.sql.SQLException eSQL) {
             throw new DBException("Instanciation du joueur impossible:\nSQLException: " + eSQL.getMessage());
@@ -80,10 +81,10 @@ public class GooseGameDB {
     public static int getIdPlayer(String pName) throws DBException {
         int idPlayer = 0;
         try {
-            String query = "SELECT pId FROM Player WHERE pName ='" + pName + "'";
             java.sql.Connection connexion = DBManager.getConnection();
             java.sql.PreparedStatement stmt;
-            stmt = connexion.prepareStatement(query);
+            stmt = connexion.prepareStatement("SELECT pId FROM Player WHERE pName ?");
+            stmt.setString(1, pName);
             java.sql.ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 idPlayer = rs.getInt("pId");
@@ -105,10 +106,11 @@ public class GooseGameDB {
     public static int getNomPlayer(int pId) throws DBException {
         int idPlayer = 0;
         try {
-            String query = "SELECT pId FROM Player WHERE pName ='" + pId + "'";
+            String query = "SELECT pName FROM Player WHERE pId = ?";
             java.sql.Connection connexion = DBManager.getConnection();
             java.sql.PreparedStatement stmt;
             stmt = connexion.prepareStatement(query);
+            stmt.setInt(1, pId);
             java.sql.ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 idPlayer = rs.getInt("pId");
@@ -135,7 +137,7 @@ public class GooseGameDB {
 
             while (rs.next()) {
                 listGames.add(new GameDto(rs.getInt("gId"), rs.getDate("gStartDate"),
-                        rs.getDate("gEndDate"), rs.getString("gWinner")));
+                        rs.getDate("gEndDate"), rs.getString("gWinner"), rs.getBoolean("gOver")));
             }
         } catch (java.sql.SQLException eSQL) {
             throw new DBException("Instanciation de la table jeu impossible:\nSQLException: " + eSQL.getMessage());
@@ -153,10 +155,11 @@ public class GooseGameDB {
     public static Date getStartDate(int gId) throws DBException {
         Date startDate = null;
         try {
-            String query = "SELECT gStartDate FROM Game WHERE gId ='" + gId + "'";
+            String query = "SELECT gStartDate FROM Game WHERE gId = ?";
             java.sql.Connection connexion = DBManager.getConnection();
             java.sql.PreparedStatement stmt;
             stmt = connexion.prepareStatement(query);
+            stmt.setInt(1, gId);
             java.sql.ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 startDate = rs.getDate("gStartDate");
@@ -177,10 +180,11 @@ public class GooseGameDB {
     public static Date getEndDate(int gId) throws DBException {
         Date endDate = null;
         try {
-            String query = "SELECT gEndDate FROM Game WHERE gId ='" + gId + "'";
+            String query = "SELECT gEndDate FROM Game WHERE gId = ?";
             java.sql.Connection connexion = DBManager.getConnection();
             java.sql.PreparedStatement stmt;
             stmt = connexion.prepareStatement(query);
+            stmt.setInt(1, gId);
             java.sql.ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 endDate = rs.getDate("gStartDate");
@@ -201,10 +205,11 @@ public class GooseGameDB {
     public static String getWinner(int gId) throws DBException {
         String winner = "";
         try {
-            String query = "SELECT gWinner FROM Game WHERE gId ='" + gId + "'";
+            String query = "SELECT gWinner FROM Game WHERE gId = ?";
             java.sql.Connection connexion = DBManager.getConnection();
             java.sql.PreparedStatement stmt;
             stmt = connexion.prepareStatement(query);
+            stmt.setInt(1, gId);
             java.sql.ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 winner = rs.getString("gWinner");
@@ -221,11 +226,12 @@ public class GooseGameDB {
      * @param nom le nom du joeuer
      * @return trus si le joueur existe déjà dans la table, false si non
      */
-    public static boolean checkUser(String name) throws DBException {
+    public static boolean checkUser(String pName) throws DBException {
         try {
-            String query = "SELECT pName FROM Player WHERE pName ='" + name + "' ";
+            String query = "SELECT pName FROM Player WHERE pName = ?";
             java.sql.Connection connexion = DBManager.getConnection();
             java.sql.PreparedStatement stmt = connexion.prepareStatement(query);
+            stmt.setString(1, pName);
             java.sql.ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
@@ -242,15 +248,18 @@ public class GooseGameDB {
      * ajoute un joueur à la table Player
      *
      * @param id id du joueur
-     * @param name nom du joueur
+     * @param pName nom du joueur
      * @throws DBException si la requête échoue
      */
-    public static void insertPlayer(int id, String name) throws DBException {
+    public static void insertPlayer(int id, String pName) throws DBException {
         try {
             java.sql.Connection connexion = DBManager.getConnection();
-            Statement insert = connexion.createStatement();
-            String query = "INSERT INTO Player (pId, Pname) VALUES(" + id + ",'" + name + "')";
-            insert.executeUpdate(query);
+            String query = "INSERT INTO Player (pId, Pname) VALUES( ?, ?)";
+            java.sql.PreparedStatement stmt = connexion.prepareStatement(query);
+            stmt.setInt(1, id);
+            stmt.setString(2, pName);
+
+            stmt.executeUpdate(query);
         } catch (java.sql.SQLException eSQL) {
             throw new DBException("L'ajout du joueur a échoué:\nSQLException: " + eSQL.getMessage());
         }
@@ -263,33 +272,44 @@ public class GooseGameDB {
      * @param startDate la date de début du jeu
      * @param endDate la de fin du jeu
      * @param winner le gagnangt du jeu
+     * @param over
      * @throws DBException si la requête échoue
      */
-    public static void insertGame(int id, Date startDate, Date endDate, String winner) throws DBException {
+    public static void insertGame(int id, Date startDate, Date endDate, String winner, boolean over) throws DBException {
         try {
             java.sql.Connection connexion = DBManager.getConnection();
-            Statement insert = connexion.createStatement();
-            String query = "INSERT INTO Game (gId, gStartDate, gEndDate, gWinner) VALUES(" + id + ", " + startDate + "," + endDate + ",'" + winner + "')";
-            insert.executeUpdate(query);
+            String query = "INSERT INTO Game (gId, gStartDate, gEndDate, gWinner, gOver)"
+                    + "VALUES(?, ?, ?, ?, ?)";
+            java.sql.PreparedStatement stmt = connexion.prepareStatement(query);
+
+            stmt.setInt(1, id);
+            //stmt.setDate(2, startDate);
+            //stmt.setDate(3, endDate);
+            stmt.setString(4, winner);
+            stmt.setBoolean(5, over);
+            stmt.executeUpdate(query);
         } catch (java.sql.SQLException eSQL) {
             throw new DBException("L'ajout du jeu a échoué:\nSQLException: " + eSQL.getMessage());
         }
     }
-    
-    
+
     /**
-     * ajoute un joueur et le jeu auquel il a joué  à la table PlayerGame
+     * ajoute un joueur et le jeu auquel il a joué à la table PlayerGame
+     *
      * @param pgPlayer l'id du joueur
      * @param pgGame le jeu auquel le joueur a joué
      * @param pgColor la couleur du joueur
      * @throws DBException si la requête échoue
      */
-    public static void insertPlayerGame(int idPlayer, int idGame, String colorPlayer) throws DBException{
+    public static void insertPlayerGame(int idPlayer, int idGame, String colorPlayer) throws DBException {
         try {
             java.sql.Connection connexion = DBManager.getConnection();
-            Statement insert = connexion.createStatement();
-            String query = "INSERT INTO PlayerGame (pgPlayer, pgGame, pgColor) VALUES("+ idPlayer + "," + idGame + ",'" + colorPlayer +"')";
-            insert.executeUpdate(query);
+            String query = "INSERT INTO PlayerGame (pgPlayer, pgGame, pgColor) VALUES(?, ? , ?)";
+            java.sql.PreparedStatement stmt = connexion.prepareStatement(query);
+            stmt.setInt(1, idPlayer);
+            stmt.setInt(2, idGame);
+            stmt.setString(3, colorPlayer);
+            stmt.executeUpdate(query);
         } catch (java.sql.SQLException eSQL) {
             throw new DBException("L'ajout du joueur et son jeu a échoué:\nSQLException: " + eSQL.getMessage());
         }

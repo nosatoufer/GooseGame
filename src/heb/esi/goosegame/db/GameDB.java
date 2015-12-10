@@ -38,7 +38,7 @@ public class GameDB {
 
             while (rs.next()) {
                 listGames.add(new GameDto(rs.getInt("gId"), rs.getDate("gStartDate"),
-                        rs.getDate("gEndDate"), rs.getString("gWinner")));
+                        rs.getDate("gEndDate"), rs.getString("gWinner"), rs.getBoolean("gOver")));
             }
         } catch (java.sql.SQLException eSQL) {
             throw new DBException("Instanciation de la table jeu impossible:\nSQLException: " + eSQL.getMessage());
@@ -56,10 +56,11 @@ public class GameDB {
     public static Date getStartDate(int gId) throws DBException {
         Date startDate = null;
         try {
-            String query = "SELECT gStartDate FROM GAME WHERE gId ='" + gId + "'";
+            String query = "SELECT gStartDate FROM GAME WHERE gId = ?";
             java.sql.Connection connexion = DBManager.getConnection();
             java.sql.PreparedStatement stmt;
             stmt = connexion.prepareStatement(query);
+            stmt.setInt(1, gId);
             java.sql.ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 startDate = rs.getDate("gStartDate");
@@ -80,10 +81,11 @@ public class GameDB {
     public static Date getEndDate(int gId) throws DBException {
         Date endDate = null;
         try {
-            String query = "SELECT gEndDate FROM GAME WHERE gId ='" + gId + "'";
+            String query = "SELECT gEndDate FROM GAME WHERE gId = ?";
             java.sql.Connection connexion = DBManager.getConnection();
             java.sql.PreparedStatement stmt;
             stmt = connexion.prepareStatement(query);
+            stmt.setInt(1, gId);
             java.sql.ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 endDate = rs.getDate("gStartDate");
@@ -104,10 +106,11 @@ public class GameDB {
     public static String getWinner(int gId) throws DBException {
         String winner = "";
         try {
-            String query = "SELECT gWinner FROM GAME WHERE gId ='" + gId + "'";
+            String query = "SELECT gWinner FROM GAME WHERE gId = ?";
             java.sql.Connection connexion = DBManager.getConnection();
             java.sql.PreparedStatement stmt;
             stmt = connexion.prepareStatement(query);
+            stmt.setInt(1, gId);
             java.sql.ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 winner = rs.getString("gWinner");
@@ -130,10 +133,14 @@ public class GameDB {
     public static void insertGame(GameDto newGame) throws DBException {
         try {
             java.sql.Connection connexion = DBManager.getConnection();
-            Statement insert = connexion.createStatement();
             String query = "INSERT INTO GAME (gId, gStartDate, gEndDate, gWinner) "
-                    + "VALUES(" + newGame.idGame() + ", " + newGame.startDateGame() + "," + newGame.endDateGame() + ",'" + newGame.wiinnerGame() + "')";
-            insert.executeUpdate(query);
+                    + "VALUES(?, ?, ?, ?, ?)";
+            java.sql.PreparedStatement stmt = connexion.prepareStatement(query);
+            stmt.setInt(1, newGame.idGame());
+            // DATES
+            stmt.setString(4, newGame.winnerGame());
+            stmt.setBoolean(5, newGame.isOver());
+            stmt.executeUpdate(query);
         } catch (java.sql.SQLException eSQL) {
             throw new DBException("L'ajout du jeu a échoué:\nSQLException: " + eSQL.getMessage());
         }
@@ -147,9 +154,10 @@ public class GameDB {
      */
     public static void deleteGame(GameDto delGame) throws DBException {
         try {
-            String query = ("DELETE FROM GAME" + " WHERE gId =" + delGame.idGame());
+            String query = "DELETE FROM GAME WHERE gId = ?";
             java.sql.Connection connexion = DBManager.getConnection();
             java.sql.PreparedStatement stmt = connexion.prepareStatement(query);
+            stmt.setInt(1, delGame.idGame());
             stmt.executeUpdate();
         } catch (SQLException ex) {
             throw new DBException("La suppression du jeu a échoué :\nSQLException: "
