@@ -3,7 +3,10 @@ package heb.esi.goosegame.db;
 import heb.esi.goosegame.dto.PlayerDto;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 /**
  * Classe utilitaire d'accès aux joueurs de la table PLAYER
@@ -22,9 +25,9 @@ public class PlayerDB {
         ArrayList<PlayerDto> listPlayers = new ArrayList<>();
         try {
             String query = "SELECT * From PLAYER";
-            java.sql.Connection connexion = DBManager.getConnection();
-            java.sql.PreparedStatement stmt = connexion.prepareStatement(query);
-            java.sql.ResultSet rs = stmt.executeQuery();
+            Connection connexion = DBManager.getConnection();
+            PreparedStatement stmt = connexion.prepareStatement(query);
+            ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 listPlayers.add(new PlayerDto(rs.getString("pName")));
             }
@@ -44,15 +47,15 @@ public class PlayerDB {
     public static boolean checkPlayer(PlayerDto player) throws DBException {
         try {
             String query = "SELECT pName FROM Player WHERE pName = ? ";
-            java.sql.Connection connexion = DBManager.getConnection();
-            java.sql.PreparedStatement stmt = connexion.prepareStatement(query);
+            Connection connexion = DBManager.getConnection();
+            PreparedStatement stmt = connexion.prepareStatement(query);
             stmt.setString(1,player.getPlayerName());
-            java.sql.ResultSet rs = stmt.executeQuery();
+            ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
                 return true;
             }
-        } catch (java.sql.SQLException eSQL) {
+        } catch (SQLException eSQL) {
             throw new DBException("Instanciation du joueur impossible:\nSQLException: " + eSQL.getMessage());
         }
 
@@ -68,13 +71,13 @@ public class PlayerDB {
      */
     public static void insertPlayer(PlayerDto newPlayer) throws DBException {
         try {
-            java.sql.Connection connexion = DBManager.getConnection();
+            Connection connexion = DBManager.getConnection();
             String query = "INSERT INTO Player(pName) VALUES(?)";
             
-            java.sql.PreparedStatement stmt = connexion.prepareStatement(query);
+            PreparedStatement stmt = connexion.prepareStatement(query);
             stmt.setString(1, newPlayer.getPlayerName());
             stmt.executeUpdate();
-        } catch (java.sql.SQLException eSQL) {
+        } catch (SQLException eSQL) {
             throw new DBException("L'ajout du joueur a échoué:\nSQLException: " + eSQL.getMessage());
         }
     }
@@ -88,8 +91,8 @@ public class PlayerDB {
     public static void deletePlayer(PlayerDto delPlayer) throws DBException {
         try {
             String query = ("DELETE FROM PLAYER WHERE pName = ?");
-            java.sql.Connection connexion = DBManager.getConnection();
-            java.sql.PreparedStatement stmt = connexion.prepareStatement(query);
+            Connection connexion = DBManager.getConnection();
+            PreparedStatement stmt = connexion.prepareStatement(query);
             stmt.setString(1, delPlayer.getPlayerName());
             stmt.executeUpdate();
         } catch (SQLException ex) {

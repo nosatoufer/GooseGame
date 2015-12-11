@@ -40,7 +40,11 @@ public class PlayerInGameDB {
             ResultSet res = stmt.executeQuery();
             while(res.next())
             {
-                listPlayers.add(new PlayerInGameDto(res.getString("pigPlayerName"), res.getString("pigGameName"), res.getString("pigPlayerColor"), res.getInt("pigOrder"), res.getInt("pigPosition")));
+                listPlayers.add(new PlayerInGameDto(res.getString("pigPlayerName"),
+                        res.getString("pigGameName"), res.getString("pigPlayerColor"),
+                        res.getInt("pigOrder"), res.getInt("pigPosition"),
+                        res.getInt("pigLastPosition"), res.getInt("pigStuck"),
+                        res.getBoolean("pigJailed")));
             }
         } catch (SQLException e) {
 
@@ -56,14 +60,19 @@ public class PlayerInGameDB {
      */
     public static void insertPlayerInGame(PlayerInGameDto newPlayerGame) throws DBException {
         try {
-            java.sql.Connection connexion = DBManager.getConnection();
-            String query = "INSERT INTO PlayerInGame (pigPlayerName, pigGameName, pigPlayerColor, pigOrder, pigPosition) VALUES(?,?,?,?,?)";
-            java.sql.PreparedStatement stmt = connexion.prepareStatement(query);
+            Connection connexion = DBManager.getConnection();
+            String query = "INSERT INTO PlayerInGame (pigPlayerName, pigGameName,"
+                    + "pigPlayerColor, pigOrder, pigPosition, pigLastPosition, pigStuck, pigJailed)"
+                    + "VALUES(?,?,?,?,?,?,?,?)";
+            PreparedStatement stmt = connexion.prepareStatement(query);
             stmt.setString(1, newPlayerGame.getPlayerName());
             stmt.setString(2, newPlayerGame.getGameName());
             stmt.setString(3, newPlayerGame.getPlayerColor());
             stmt.setInt(4, newPlayerGame.getOrder());
             stmt.setInt(5, newPlayerGame.getPosition());
+            stmt.setInt(6, newPlayerGame.getLastPosition());
+            stmt.setInt(7, newPlayerGame.getStuck());
+            stmt.setBoolean(8, newPlayerGame.isJailed());
             stmt.executeUpdate();
         } catch (java.sql.SQLException eSQL) {
             throw new DBException("L'ajout du joueur a échoué:\nSQLException: " + eSQL.getMessage());
@@ -79,8 +88,8 @@ public class PlayerInGameDB {
     public static void deletePlayerInGame(PlayerInGameDto delPlayer) throws DBException {
         try {
             String query = "DELETE FROM PlayerInGame WHERE pigPlayerName = ? AND pigGameName = ?";
-            java.sql.Connection connexion = DBManager.getConnection();
-            java.sql.PreparedStatement stmt = connexion.prepareStatement(query);
+            Connection connexion = DBManager.getConnection();
+            PreparedStatement stmt = connexion.prepareStatement(query);
             stmt.setString(1, delPlayer.getPlayerName());
             stmt.setString(2, delPlayer.getGameName());
             stmt.executeUpdate();

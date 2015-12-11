@@ -1,5 +1,8 @@
 package heb.esi.goosegame.model;
 
+import heb.esi.goosegame.db.PlayerInGameDB;
+import heb.esi.goosegame.dto.PlayerInGameDto;
+
 /**
  * Represent the player with his color, number, position et status.
  * 
@@ -30,6 +33,27 @@ public class Player {
         this.lastPosition = 0;
         this.stuck = 0;
         this.jail = false;
+    }
+    
+    
+    public Player(PlayerInGameDto player)
+    {
+        this.name = player.getPlayerName();
+        this.color = player.getPlayerColor();
+        this.position = player.getPosition();
+        this.jail = player.isJailed();
+        this.stuck = player.getStuck();
+        this.lastPosition = player.getLastPosition();
+    }
+    
+    /**
+     * Return a PlayerDto build from the player
+     * @param gameName
+     * @return 
+     */
+    public PlayerInGameDto playerDto(String gameName)
+    {
+        return new PlayerInGameDto(name, gameName, color, position, position, lastPosition, stuck, jail);
     }
     
     /**

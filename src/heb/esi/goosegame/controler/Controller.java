@@ -18,19 +18,18 @@ import javafx.util.Pair;
  * @author nosa
  */
 public class Controller {
-    
+
     private Game game;
 
     private final ArrayList<View> views;
-    
+
     /**
      *
      */
-    public Controller ()
-    {
+    public Controller() {
         this.views = new ArrayList<>();
     }
-    
+
     /**
      *
      * @param view
@@ -38,23 +37,23 @@ public class Controller {
     public void attachView(View view) {
         this.views.add(view);
     }
-    
+
     /**
      *
      */
     public void updateViews() {
-        for(int i=0; i<views.size(); i++) {
+        for (int i = 0; i < views.size(); i++) {
             views.get(i).refresh();
         }
     }
-    
+
     /**
      *
      */
     public void newGame() {
         this.game = new Game(this);
     }
-    
+
     /**
      *
      * @param name
@@ -62,75 +61,68 @@ public class Controller {
      * @throws GooseGameException
      * @throws DBException
      */
-    public void newPlayer(String name, Color c) throws GooseGameException, DBException
-    {
+    public void newPlayer(String name, Color c) throws GooseGameException, DBException {
         GooseGameFacade.createPlayer(name);
         this.game.addPlayer(name, c.toString());
     }
-    
+
     /**
      *
      * @param pos
      * @throws GooseGameException
      */
-    public void movePlayerToPos(int pos) throws GooseGameException
-    {
+    public void movePlayerToPos(int pos) throws GooseGameException {
         this.game.play(pos);
     }
-    
+
     /**
      *
      * @throws GooseGameException
      */
-    public void checkPlayers() throws GooseGameException
-    {
+    public void checkPlayers() throws GooseGameException {
         this.game.checkPlayers();
     }
-    
+
     /**
      *
      * @throws GooseGameException
      */
-    public void rollDice() throws GooseGameException
-    {
+    public void rollDice() throws GooseGameException {
         this.game.rollDices();
     }
-    
+
     /**
      *
      * @throws GooseGameException
      */
-    public void startGame() throws GooseGameException
-    {
+    public void startGame() throws GooseGameException {
         this.game.start();
     }
-    
+
     /**
      *
-     * @return
-     * @throws GooseGameException
+     * @return @throws GooseGameException
      */
-    public int getNextCaseToMove() throws GooseGameException
-    {
+    public int getNextCaseToMove() throws GooseGameException {
         return this.game.getNextCaseToMove();
     }
-    
+
     /**
      *
      * @return
      */
     public ArrayList<Pair<Color, Integer>> getPlayerPos() {
-        
+
         ArrayList<Pair<Color, Integer>> convertedPlayers = new ArrayList<>();
         ArrayList<Pair<String, Integer>> players = this.game.getPlayerPos();
 
         for (Pair<String, Integer> player : players) {
             convertedPlayers.add(new Pair<>(Color.valueOf(player.getKey()), player.getValue()));
         }
-        
+
         return convertedPlayers;
     }
-    
+
     /**
      *
      * @return
@@ -138,18 +130,18 @@ public class Controller {
     public boolean isGameStarted() {
         return (this.game.getGameState() == GameState.STARTED);
     }
-    
+
     /**
      *
      * @return
      */
     public boolean isGameOver() {
         if (game.getGameState() == GameState.OVER) {
-            
+
         }
         return (game.getGameState() == GameState.OVER);
     }
-    
+
     /**
      *
      * @return
@@ -157,18 +149,18 @@ public class Controller {
     public int getDicesSum() {
         return game.getDicesSum();
     }
-    
+
     /**
      *
      * @return
      */
-    public Pair<String,Color> getCurrentPlayer() {
-        Pair<String,String> gamePlayer = game.getCurrentPlayer();
-        Pair<String,Color> player = new Pair<>(gamePlayer.getKey(), Color.valueOf(gamePlayer.getValue()));
-        
+    public Pair<String, Color> getCurrentPlayer() {
+        Pair<String, String> gamePlayer = game.getCurrentPlayer();
+        Pair<String, Color> player = new Pair<>(gamePlayer.getKey(), Color.valueOf(gamePlayer.getValue()));
+
         return player;
     }
-    
+
     /**
      *
      * @return
@@ -176,19 +168,20 @@ public class Controller {
     public ArrayList<Pair<Integer, CaseType>> getSpecialCases() {
         return game.getSpecialCases();
     }
-    
+
     /**
      * On récupère les noms des parties sauvegardées
+     *
      * @return
      * @throws DBException
      */
-    public ArrayList<String> getSavedGames() throws DBException
-    {
+    public ArrayList<String> getSavedGames() throws DBException {
         return GooseGameFacade.getSavedGames();
     }
-    
+
     /**
      * Permet de charger une partie avec ses joueurs depuis la base de donnée
+     *
      * @param name
      * @throws DBException
      * @throws GooseGameException
@@ -201,7 +194,7 @@ public class Controller {
             this.game = new Game(this, game.getName());
             // On récupère les associations des joueurs avec cette partoe
             ArrayList<PlayerInGameDto> players = GooseGameFacade.getAllPlayerFromGame(name);
-            for(PlayerInGameDto player : players) {
+            for (PlayerInGameDto player : players) {
                 // On les ajoute dans le jeu et on les place au bon endroit
                 this.game.addPlayer(player.getPlayerName(), player.getPlayerColor());
                 this.game.setPlayerPosition(player.getPlayerName(), player.getPosition());
@@ -214,43 +207,76 @@ public class Controller {
         // On met à jour la vue
         updateViews();
     }
-    
+
     /**
      * Permet de sauvegarder une partie et ses joueurs dans la base de donnée
+     *
      * @throws DBException
      */
     public void saveGame() throws DBException, GooseGameException {
         if (this.game.getName() != null) {
             GooseGameFacade.saveGame(new GameDto(this.game.getName(), this.game.getCurrentPlayerId(), this.isGameOver()));
-            ArrayList<Pair<String, Pair<String, Integer>>> players = game.getPlayers();
-            int i=0;
-            for (Pair<String, Pair<String, Integer>> player : players) {
-                GooseGameFacade.savePlayerInGame(new PlayerInGameDto(player.getKey(), this.game.getName(), player.getValue().getKey(), i, player.getValue().getValue()));
+            ArrayList<PlayerInGameDto> players = game.getPlayers();
+            int i = 0;
+            for (PlayerInGameDto player : players) {
+                GooseGameFacade.savePlayerInGame(player);
                 i++;
             }
         } else {
             throw new GooseGameException("Le partie que vous essayez de sauvegarder ne possède pas de nom.");
         }
     }
-    
+    /* OLD
+     public void saveGame() throws DBException, GooseGameException {
+     if (this.game.getName() != null) {
+     GooseGameFacade.saveGame(new GameDto(this.game.getName(), this.game.getCurrentPlayerId(), this.isGameOver()));
+     ArrayList<Pair<String, Pair<String, Integer>>> players = game.getPlayers();
+     int i=0;
+     for (Pair<String, Pair<String, Integer>> player : players) {
+     GooseGameFacade.savePlayerInGame(new PlayerInGameDto(
+     player.getKey(), this.game.getName(), player.getValue().getKey(),
+     i, player.getValue().getValue(), player.));
+     i++;
+     }
+     } else {
+     throw new GooseGameException("Le partie que vous essayez de sauvegarder ne possède pas de nom.");
+     }
+     }
+     */
+
     /**
      * Permet de mettre à jour une partie et ses joueurs dans la base de donnée
+     *
      * @throws DBException
      */
     public void updateGame() throws DBException {
         GooseGameFacade.updateGame(new GameDto(this.game.getName(), this.game.getCurrentPlayerId(), this.isGameOver()));
-        ArrayList<Pair<String, Pair<String, Integer>>> players = game.getPlayers();
-        int i=0;
-        for (Pair<String, Pair<String, Integer>> player : players) {
+        ArrayList<PlayerInGameDto> players = game.getPlayers();
+        int i = 0;
+        for (PlayerInGameDto player : players) {
             // Suppression puis création pour gérer le cas des nouveaux joueurs ajoutés au cours de partie
-            GooseGameFacade.deletePlayerInGame(new PlayerInGameDto(player.getKey(), this.game.getName(), player.getValue().getKey(), i, player.getValue().getValue()));
-            GooseGameFacade.savePlayerInGame(new PlayerInGameDto(player.getKey(), this.game.getName(), player.getValue().getKey(), i, player.getValue().getValue()));
+            GooseGameFacade.deletePlayerInGame(player);
+            GooseGameFacade.savePlayerInGame(player);
             i++;
         }
     }
-    
+
+    /* OLD 
+     public void updateGame() throws DBException {
+     GooseGameFacade.updateGame(new GameDto(this.game.getName(), this.game.getCurrentPlayerId(), this.isGameOver()));
+     ArrayList<PlayerInGameDto> players = game.getPlayers();
+     int i=0;
+     for (PlayerInGameDto player : players) {
+     // Suppression puis création pour gérer le cas des nouveaux joueurs ajoutés au cours de partie
+     GooseGameFacade.deletePlayerInGame(new PlayerInGameDto(player.getKey(), this.game.getName(), player.getValue().getKey(), i, player.getValue().getValue()));
+     GooseGameFacade.savePlayerInGame(new PlayerInGameDto(player.getKey(), this.game.getName(), player.getValue().getKey(), i, player.getValue().getValue()));
+     i++;
+     }
+     }
+     */
     /**
      * Permet de vérifier si un nom de partie existe déjà ou pas
+     *
      * @param name
      * @return
      * @throws DBException
@@ -264,7 +290,7 @@ public class Controller {
         }
         return GooseGameFacade.checkGameName(name);
     }
-    
+
     /**
      *
      * @return

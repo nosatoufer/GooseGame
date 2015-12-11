@@ -7,13 +7,13 @@ package heb.esi.goosegame.db;
 public class DBException extends Exception{
     
      /**
-     * Creates a new instance of <code>PenduDbException</code> without detail message.
+     * Creates a new instance of DBException without detail message.
      */
     public DBException() {
     }
 
     /**
-     * Constructs an instance of <code>PenduDbException</code> with the specified detail message.
+     * Constructs an instance of DBException with the specified detail message.
      * @param msg the detail message.
      */
     public DBException(String msg) {

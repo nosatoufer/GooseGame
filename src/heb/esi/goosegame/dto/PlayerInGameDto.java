@@ -17,6 +17,9 @@ public class PlayerInGameDto {
     private final /*PlayerColor*/String pigPlayerColor;
     private final int pigOrder;
     private final int pigPosition;
+    private final int pigLastPosition;
+    private final int pigStuck;
+    private final boolean pigJailed;
 
     /**
      * Constructeur de la classe PlayerGameDto.
@@ -26,13 +29,21 @@ public class PlayerInGameDto {
      * @param pigPlayerColor
      * @param pigOrder
      * @param pigPosition
+     * @param lastPos
+     * @param stuck
+     * @param jailed
      */
-    public PlayerInGameDto(String pigPlayerName, String pigGameName, String pigPlayerColor, int pigOrder, int pigPosition) {
+    public PlayerInGameDto(String pigPlayerName, String pigGameName, 
+            String pigPlayerColor, int pigOrder, int pigPosition,
+            int lastPos, int stuck, boolean jailed) {
         this.pigPlayerName = pigPlayerName;
         this.pigGameName = pigGameName;
         this.pigPlayerColor = pigPlayerColor;
         this.pigOrder = pigOrder;
         this.pigPosition = pigPosition;
+        this.pigLastPosition = lastPos;
+        this.pigStuck = stuck;
+        this.pigJailed = jailed;
     }
     
     /**
@@ -73,5 +84,20 @@ public class PlayerInGameDto {
      */
     public int getOrder(){
         return this.pigOrder;
+    }
+    
+    public int getLastPosition()
+    {
+        return this.pigLastPosition;
+    }
+    
+    public int getStuck()
+    {
+        return this.pigStuck;
+    }
+    
+    public boolean isJailed()
+    {
+        return this.pigJailed;
     }
 }

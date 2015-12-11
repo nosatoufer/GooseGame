@@ -2,6 +2,7 @@ package heb.esi.goosegame.model;
 
 import heb.esi.goosegame.controler.Controller;
 import heb.esi.goosegame.db.DBException;
+import heb.esi.goosegame.dto.PlayerInGameDto;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -41,7 +42,7 @@ public class Game {
         this.dicesRolled = false;
         this.activePlayerNextPos = -1;
     }
-    
+
     /**
      *
      * @param controler
@@ -291,7 +292,8 @@ public class Game {
 
     /**
      * Retourne la liste des couleurs des joueurs associés à leur position.
-     * @return 
+     *
+     * @return
      */
     public ArrayList<Pair<String, Integer>> getPlayerPos() {
         ArrayList<Pair<String, Integer>> players = new ArrayList<>();
@@ -302,21 +304,34 @@ public class Game {
 
         return players;
     }
-    
+
     /**
      * Retourne la liste des couleurs des joueurs associés à leur position.
-     * @return 
+     *
+     * @return
      */
-    public ArrayList<Pair<String, Pair<String, Integer>>> getPlayers() {
-        ArrayList<Pair<String, Pair<String, Integer>>> players = new ArrayList<>();
+    /*
+     public ArrayList<Pair<String, Pair<String, Integer>>> getPlayers() {
+     ArrayList<Pair<String, Pair<String, Integer>>> players = new ArrayList<>();
 
-        for (Player player : this.players) {
-            players.add(new Pair<>(player.getName(), new Pair<>(player.getColor(), player.position())));
+     for (Player player : this.players) {
+     players.add(new Pair<>(player.getName(), new Pair<>(player.getColor(), player.position())));
+     }
+
+     return players;
+     }
+     */
+    public ArrayList<PlayerInGameDto> getPlayers() {
+        ArrayList<PlayerInGameDto> p = new ArrayList<>();
+
+        if (this.name != null) {
+            for (Player player : this.players) {
+                p.add(player.playerDto(this.name));
+            }
         }
-
-        return players;
+        return p;
     }
-    
+
     /**
      *
      * @param name
@@ -330,7 +345,7 @@ public class Game {
             }
         }
     }
-    
+
     /**
      *
      * @param nb
@@ -348,17 +363,17 @@ public class Game {
      * @return couleur du joueur actif
      */
     public Pair<String, String> getCurrentPlayer() {
-        
+
         return new Pair<>(this.players.get(this.currentPlayer).getName(), this.players.get(this.currentPlayer).getColor());
     }
-    
+
     /**
      * Retourne la couleur du joueur actuel.
      *
      * @return couleur du joueur actif
      */
     public int getCurrentPlayerId() {
-        
+
         return this.currentPlayer;
     }
 
@@ -370,7 +385,7 @@ public class Game {
     public GameState getGameState() {
         return this.gameState;
     }
-    
+
     /**
      * Retourne l'état actuel de la partie.
      *
@@ -379,7 +394,7 @@ public class Game {
     public String getName() {
         return this.name;
     }
-    
+
     /**
      * Retourne l'état actuel de la partie.
      *

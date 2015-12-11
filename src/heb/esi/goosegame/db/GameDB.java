@@ -127,7 +127,7 @@ public class GameDB {
             stmt.setBoolean(3, newGame.isOver());
             stmt.executeUpdate();
         } catch (java.sql.SQLException eSQL) {
-            throw new DBException("L'ajout du jeu a échoué (ERR03)\nSQLException: " + eSQL.getMessage());
+            throw new DBException("L'ajout du jeu a échoué bla (ERR03)\nSQLException: " + eSQL.getMessage());
         }
     }
 
