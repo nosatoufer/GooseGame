@@ -6,8 +6,6 @@ import heb.esi.goosegame.model.GooseGameException;
 
 import java.util.ArrayList;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -173,6 +171,7 @@ public class MainWindow extends Parent implements View {
                     if (result.get() == ButtonType.OK){
                         // Action : demande la liste de joueurs qui joue à la partie
                         GameChoice gameChoice = new GameChoice(getObject(), controller);
+                        board.reset();
                         throwDicesButton.setDisable(false);
                     } else {
                         event.consume();
@@ -195,12 +194,12 @@ public class MainWindow extends Parent implements View {
                     if (controller.getGameName() == null) {
                         TextInputDialog dialog = new TextInputDialog();
                         dialog.setTitle("Sauvegarde de partie");
+                        dialog.setHeaderText(null);
                         dialog.setContentText("Veuillez entrer le nom de sauvegarde de votre partie");
 
                         // Traditional way to get the response value.
                         Optional<String> result = dialog.showAndWait();
                         if (result.isPresent()){
-                                System.out.println("Your name: " + result.get());
                                 if (!controller.checkGameName(result.get())) {
                                     controller.saveGame();
                                 } else {

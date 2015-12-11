@@ -179,10 +179,11 @@ public class CaseView extends Parent implements Serializable {
     /**
      *
      */
-    public void deleteAll() {
+    public void reset() {
         for (CustomRectangle rect : this.players) {
             rect.setColor(Color.TRANSPARENT);
         }
+        turnOff();
     }
     
     /**

@@ -108,7 +108,7 @@ public class BoardView extends Parent implements Serializable {
      */
     public void reset() {
         for (int i=0; i<64; ++i) {
-            this.cases[i].deleteAll();
+            this.cases[i].reset();
         }
     }
     

@@ -17,10 +17,10 @@ public class GameDB {
      * @return la collection de tous les jeux
      * @throws DBException si la requête échoue
      */
-    public static ArrayList<GameDto> getAllGames() throws DBException {
+    public static ArrayList<GameDto> getActiveGames() throws DBException {
         ArrayList<GameDto> listGames = new ArrayList();
         try {
-            String query = "SELECT * FROM GAME";
+            String query = "SELECT * FROM GAME Where gOver=false";
             java.sql.Connection connexion = DBManager.getConnection();
             java.sql.PreparedStatement stmt = connexion.prepareStatement(query);
             java.sql.ResultSet rs = stmt.executeQuery();

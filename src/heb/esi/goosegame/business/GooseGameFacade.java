@@ -21,8 +21,8 @@ public class GooseGameFacade {
      * @throws DBException
      */
     
-    static public ArrayList<String> getSavedGames() throws DBException {
-        ArrayList<GameDto> games = GameDB.getAllGames();
+    static public ArrayList<String> getActiveSavedGames() throws DBException {
+        ArrayList<GameDto> games = GameDB.getActiveGames();
         ArrayList<String> gamesName = new ArrayList<>();
         for(GameDto game : games) {
             gamesName.add(game.getName());

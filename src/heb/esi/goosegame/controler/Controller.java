@@ -175,8 +175,8 @@ public class Controller {
      * @return
      * @throws DBException
      */
-    public ArrayList<String> getSavedGames() throws DBException {
-        return GooseGameFacade.getSavedGames();
+    public ArrayList<String> getActiveSavedGames() throws DBException {
+        return GooseGameFacade.getActiveSavedGames();
     }
 
     /**

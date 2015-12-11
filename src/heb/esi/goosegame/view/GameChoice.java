@@ -4,7 +4,6 @@ import heb.esi.goosegame.controler.Controller;
 import heb.esi.goosegame.db.DBException;
 import heb.esi.goosegame.model.GooseGameException;
 import java.util.ArrayList;
-import java.util.Optional;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -14,9 +13,7 @@ import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
 import javafx.scene.input.MouseEvent;
@@ -60,6 +57,12 @@ public class GameChoice extends Parent {
             this.gameChoiceStage = new Stage();
             this.gameChoiceStage.setTitle("Chargement d'une partie");
             this.gameChoiceStage.setResizable(false);
+            this.gameChoiceStage.setOnCloseRequest(new EventHandler<WindowEvent>() { 
+                @Override 
+                public void handle(WindowEvent event) { 
+                    parent.refresh();
+                }
+            });
             this.gameChoiceGroup = new Group();
             this.gameChoiceScene = new Scene(this.gameChoiceGroup);
             this.gameChoiceStage.initOwner(parent.getStage());
@@ -71,7 +74,7 @@ public class GameChoice extends Parent {
             this.gameComboBoxData = FXCollections.observableArrayList();
             
             // On récupère la liste des parties sauvegardées
-            ArrayList<String> savedGames = this.controller.getSavedGames();
+            ArrayList<String> savedGames = this.controller.getActiveSavedGames();
             
             for (String game : savedGames) {
                 gameComboBoxData.add(game);
