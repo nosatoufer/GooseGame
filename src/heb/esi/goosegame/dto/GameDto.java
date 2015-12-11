@@ -5,9 +5,6 @@
  */
 package heb.esi.goosegame.dto;
 
-import java.util.Date;
-import heb.esi.goosegame.model.Player;
-
 /**
  * Classe de transfert des données d'un jeu
  *
@@ -15,57 +12,54 @@ import heb.esi.goosegame.model.Player;
  */
 public class GameDto {
 
-    private final int gId;
-    private final boolean gOver;
-    private final String gWinner;
+    private int gCurrentPlayer;
     private final String gName;
-    private final String gDesc;
+    private boolean gOver;
 
     /**
      * Constructeur de la classe GameDto.
      *
-     * @param gId id du jeu.
-     * @param over
      * @param name
-     * @param gWinner gagnant du jeu
-     * @param desc
+     * @param gCurrentPlayer
+     * @param gOver
      */
-    public GameDto(int gId, String gWinner, Boolean over, String name,String desc) {
-        this.gId = gId;
-        this.gWinner = gWinner;
-        this.gOver = over;
+    public GameDto(String name, int gCurrentPlayer, boolean gOver) {
+        this.gCurrentPlayer = gCurrentPlayer;
+        this.gOver = gOver;
         this.gName = name;
-        this.gDesc = desc;
     }
 
     /**
-     * retourne l'id du jeu
-     * @return  l'id du jeu
+     *
+     * @param name
      */
-    public int idGame() {
-        return this.gId;
+    public GameDto(String name) {
+        this.gName = name;
     }
 
     /**
      * retourne le gagnant du jeu
      * @return  le gagnant du jeu
      */
-    public String winnerGame() {
-        return this.gWinner;
+    public int getCurrentPlayer() {
+        return this.gCurrentPlayer;
     }
     
+    /**
+     *
+     * @return
+     */
     public boolean isOver()
     {
         return gOver;
     }
     
-    public String name()
+    /**
+     *
+     * @return
+     */
+    public String getName()
     {
         return gName;
-    }
-
-    public String desc()
-    {
-        return gDesc;
     }
 }

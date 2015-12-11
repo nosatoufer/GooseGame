@@ -1,7 +1,10 @@
 package heb.esi.goosegame.model;
 
 import heb.esi.goosegame.controler.Controller;
+import heb.esi.goosegame.db.DBException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javafx.util.Pair;
 
@@ -11,7 +14,8 @@ import javafx.util.Pair;
  */
 public class Game {
 
-    private final Controller controler; // Controleur
+    private final Controller controller; // Controleur
+    private String name;
     private final Board board; // Plateau du jeu
     private final ArrayList<Player> players; // Liste des joueurs
     private int currentPlayer; // Indice du joueur actuel
@@ -22,8 +26,30 @@ public class Game {
     private int activePlayerNextPos; // Entier indiquant la case sur laquelle va
     // tomber le joueur actif (mise à jour après le lancé de dés).
 
+    /**
+     *
+     * @param controler
+     */
     public Game(Controller controler) {
-        this.controler = controler;
+        this.name = null;
+        this.controller = controler;
+        this.currentPlayer = 0;
+        this.players = new ArrayList<>();
+        this.board = new Board();
+        this.gameState = GameState.NOTSTARTED;
+        this.dices = new Dices(2, 6);
+        this.dicesRolled = false;
+        this.activePlayerNextPos = -1;
+    }
+    
+    /**
+     *
+     * @param controler
+     * @param name
+     */
+    public Game(Controller controler, String name) {
+        this.name = name;
+        this.controller = controler;
         this.currentPlayer = 0;
         this.players = new ArrayList<>();
         this.board = new Board();
@@ -143,6 +169,11 @@ public class Game {
 
         } else { // Si on est arrivé à la fin, c'est la fin du jeu
             this.gameState = GameState.OVER;
+            try {
+                this.controller.updateGame();
+            } catch (DBException ex) {
+                Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
 
         updateViews();
@@ -271,14 +302,64 @@ public class Game {
 
         return players;
     }
+    
+    /**
+     * Retourne la liste des couleurs des joueurs associés à leur position.
+     * @return 
+     */
+    public ArrayList<Pair<String, Pair<String, Integer>>> getPlayers() {
+        ArrayList<Pair<String, Pair<String, Integer>>> players = new ArrayList<>();
+
+        for (Player player : this.players) {
+            players.add(new Pair<>(player.getName(), new Pair<>(player.getColor(), player.position())));
+        }
+
+        return players;
+    }
+    
+    /**
+     *
+     * @param name
+     * @param pos
+     */
+    public void setPlayerPosition(String name, int pos) {
+        for (Player player : this.players) {
+            if (player.getName().equals(name)) {
+                player.setPosition(pos);
+                break;
+            }
+        }
+    }
+    
+    /**
+     *
+     * @param nb
+     */
+    public void setCurrentPlayer(int nb) {
+        if (nb < this.players.size()) {
+            this.currentPlayer = nb;
+            this.gameState = GameState.STARTED;
+        }
+    }
 
     /**
      * Retourne la couleur du joueur actuel.
      *
      * @return couleur du joueur actif
      */
-    public String getCurrentPlayerColor() {
-        return this.players.get(this.currentPlayer).getColor();
+    public Pair<String, String> getCurrentPlayer() {
+        
+        return new Pair<>(this.players.get(this.currentPlayer).getName(), this.players.get(this.currentPlayer).getColor());
+    }
+    
+    /**
+     * Retourne la couleur du joueur actuel.
+     *
+     * @return couleur du joueur actif
+     */
+    public int getCurrentPlayerId() {
+        
+        return this.currentPlayer;
     }
 
     /**
@@ -289,11 +370,29 @@ public class Game {
     public GameState getGameState() {
         return this.gameState;
     }
+    
+    /**
+     * Retourne l'état actuel de la partie.
+     *
+     * @return état de la partie
+     */
+    public String getName() {
+        return this.name;
+    }
+    
+    /**
+     * Retourne l'état actuel de la partie.
+     *
+     * @param name
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
 
     /**
      * Met à joueur les vues du controleur.
      */
     public void updateViews() {
-        this.controler.updateViews();
+        this.controller.updateViews();
     }
 }

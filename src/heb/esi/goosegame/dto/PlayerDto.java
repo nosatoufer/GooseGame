@@ -10,35 +10,23 @@ package heb.esi.goosegame.dto;
  * @author HONEY
  */
 public class PlayerDto {
-    private int pId;
     private String pName;
     
     
     /**
      * Constructeur de la classe PlayerDto.
      *
-     * @param pId id du joueur.
      * @param pName nom du joueur.
      */
-    public PlayerDto(int pId, String pName){
-        this.pId = pId;
+    public PlayerDto(String pName){
         this.pName = pName;
-    }
-    
-    /**
-    *retourne l'id du joueur
-    * @return l'id du joueur
-    */
-    public int idPlayer(){
-        return this.pId;
     }
     
     /**
     *retourne le nom du joueur
     * @return le nom du joueur
     */
-    public String namePlayer(){
+    public String getPlayerName(){
         return this.pName;
     }
-    
 }

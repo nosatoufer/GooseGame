@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package heb.esi.goosegame.db;
 
 import java.sql.*;
@@ -15,25 +10,24 @@ import java.sql.*;
 public class DBManager {
 
     private static Connection connection;
-    private static MesParametresDeConnexion dbChoisie;
+    private static DBInfo db;
 
     /**
      * Cree une connexion a partir des elements donnes
      *
-     * @throws DBException <ul><li>si le driver n'est pas
-     * trouve</li><li>si la connexion n'a pu etre etablie</li><ul>
+     * @throws DBException si le driver n'est pas
+     * trouve ou que la connexion n'a pu etre etablie
      */
     private static void setConnection() throws DBException {
         try {
-            dbChoisie = MesParametresDeConnexion.JAVADB;
-            connection = DriverManager.getConnection(dbChoisie.getUrl(),
-                    dbChoisie.getUid(), dbChoisie.getPsw());
+            db = DBInfo.JAVADB;
+            
+            connection = DriverManager.getConnection(db.getUrl(), db.getUid(), db.getPsw());
 
             System.out.flush();
             connection.setAutoCommit(true);
         } catch (SQLException ex) {
-            throw new DBException("Probleme de connexion.  \n " + ex.getMessage());
-
+            throw new DBException("Probleme de connexion. " + ex.getMessage());
         }
     }
     
@@ -41,6 +35,7 @@ public class DBManager {
      * Retourne la connexion etablie ou a defaut, l'etablit
      *
      * @return la connexion etablie.
+     * @throws heb.esi.goosegame.db.DBException
      */
     public static Connection getConnection() throws DBException {
         if (connection == null) {
@@ -52,12 +47,10 @@ public class DBManager {
     /**
      * debute une transaction
      *
-     * @throws FourchetteDBException Transformation de la SQLException en
-     * FourchetteDBException
+     * @throws heb.esi.goosegame.db.DBException
      */
     public static void startTransaction() throws DBException {
         try {
-
             getConnection().setAutoCommit(false);
         } catch (SQLException ex) {
             throw new DBException("Impossible de demarrer une transaction");
@@ -66,28 +59,26 @@ public class DBManager {
     
     /**
      * valide la transaction courante
-     * @throws FourchetteDbException validation non réalisée
+     * @throws heb.esi.goosegame.db.DBException
      */
     public static void valideTransaction() throws  DBException {
         try {
             getConnection().commit();
             getConnection().setAutoCommit(true);
         } catch (SQLException ex) {
-            ex.printStackTrace();
             throw new DBException("Impossible de valider la transaction");
         }
     }
     
     /**
      * annule la transaction courante
-     * @throws FourchetteDbException annulation non realisee
+     * @throws heb.esi.goosegame.db.DBException
      */
     public static void annuleTransaction() throws  DBException {
         try {
             getConnection().rollback();
             getConnection().setAutoCommit(true);
         } catch (SQLException ex) {
-            ex.printStackTrace();
             throw new DBException("Impossible d'annuler la transaction");
         }
     }

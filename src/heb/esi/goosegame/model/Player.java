@@ -105,11 +105,19 @@ public class Player {
         this.jail = !this.jail;
     }
     
+    /**
+     *
+     * @return
+     */
     public String getName()
     {
         return this.name;
     }
     
+    /**
+     *
+     * @return
+     */
     public String getColor()
     {
         return this.color;

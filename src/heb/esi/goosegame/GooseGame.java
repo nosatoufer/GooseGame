@@ -18,6 +18,10 @@ public class GooseGame extends Application {
         Application.launch(GooseGame.class, args);
     }
 
+    /**
+     *
+     * @param primaryStage
+     */
     @Override
     public void start(Stage primaryStage) {
         // Création du controleur

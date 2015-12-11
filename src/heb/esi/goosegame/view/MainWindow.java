@@ -1,10 +1,13 @@
 package heb.esi.goosegame.view;
 
 import heb.esi.goosegame.controler.Controller;
+import heb.esi.goosegame.db.DBException;
 import heb.esi.goosegame.model.GooseGameException;
 
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -21,11 +24,13 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -43,7 +48,8 @@ public class MainWindow extends Parent implements View {
     
     private final Button throwDicesButton;
     private final Text dicesSumText;
-    private final Text playerText;
+    private final Text playerText1;
+    private final Text playerText2;
     
     private final BoardView board;
     
@@ -57,6 +63,8 @@ public class MainWindow extends Parent implements View {
     private final MenuBar menuBar;
     private final Menu menuFile;
     private final MenuItem newGame;
+    private final MenuItem loadGame;
+    private final MenuItem saveGame;
     private final MenuItem quit;
     private final Menu menuHelp;
     private final MenuItem rules;
@@ -65,6 +73,10 @@ public class MainWindow extends Parent implements View {
     private final MenuItem addPlayer;
     private final MenuItem startGame;
     
+    /**
+     *
+     * @param controller
+     */
     public MainWindow(Controller controller) {
         // Création du controler avec attachement du modèle (pour que le controler puisse agir sur le model)
         this.controller = controller;
@@ -88,6 +100,8 @@ public class MainWindow extends Parent implements View {
                     } else {
                         event.consume();
                     }
+                } else {
+                    mainStage.close();
                 }
             } 
         });
@@ -101,7 +115,7 @@ public class MainWindow extends Parent implements View {
         // Menu File de la barre de menu
         this.menuFile = new Menu("File");
         // On ajoute l'item "New Game" au menu "File"
-        this.newGame = new MenuItem("New Game");
+        this.newGame = new MenuItem("New game");
         this.newGame.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -121,15 +135,111 @@ public class MainWindow extends Parent implements View {
                         startGame.setDisable(true);
                         addPlayer.setDisable(false);
                         dicesSumText.setText("/");
-                        playerText.setText("");
+                        playerText1.setText("");
+                        playerText2.setText("");
                         throwDicesButton.setDisable(true);
                     } else {
                         event.consume();
                     }
+                } else {
+                    // Réinitialise le plateau
+                    board.reset();
+                    // Crée une nouvelle partie
+                    controller.newGame();
+                    // Action : désactive et active les boutons correctement
+                    startGame.setDisable(true);
+                    addPlayer.setDisable(false);
+                    dicesSumText.setText("/");
+                    playerText1.setText("");
+                    playerText2.setText("");
+                    throwDicesButton.setDisable(true);
+                }
+                menuGame.setDisable(false);
+            }
+        });
+        this.menuFile.getItems().addAll(this.newGame);
+        // On ajoute l'item "Load Game" au menu "File"
+        this.loadGame = new MenuItem("Load game");
+        this.loadGame.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if (controller.isGameStarted()) {
+                    Alert alert = new Alert(AlertType.CONFIRMATION);
+                    alert.setTitle("Confirmation");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Voulez vous vraiment quitter la partie en cours ?");
+
+                    Optional<ButtonType> result = alert.showAndWait();
+                    if (result.get() == ButtonType.OK){
+                        // Action : demande la liste de joueurs qui joue à la partie
+                        GameChoice gameChoice = new GameChoice(getObject(), controller);
+                        throwDicesButton.setDisable(false);
+                    } else {
+                        event.consume();
+                    }
+                } else {
+                    GameChoice gameChoice = new GameChoice(getObject(), controller);
+                    throwDicesButton.setDisable(false);
+                }
+                menuGame.setDisable(false);
+                startGame.setDisable(true);
+            }
+        });
+        this.menuFile.getItems().addAll(this.loadGame);
+        // On ajoute l'item "Save Game" au menu "File"
+        this.saveGame = new MenuItem("Save game");
+        this.saveGame.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                try {
+                    if (controller.getGameName() == null) {
+                        TextInputDialog dialog = new TextInputDialog();
+                        dialog.setTitle("Sauvegarde de partie");
+                        dialog.setContentText("Veuillez entrer le nom de sauvegarde de votre partie");
+
+                        // Traditional way to get the response value.
+                        Optional<String> result = dialog.showAndWait();
+                        if (result.isPresent()){
+                                System.out.println("Your name: " + result.get());
+                                if (!controller.checkGameName(result.get())) {
+                                    controller.saveGame();
+                                } else {
+                                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                                    alert.setTitle("Erreur lors de la sauvegarde de la partie");
+                                    alert.setHeaderText(null);
+                                    alert.setContentText("Le nom de partie est déjà pris");
+
+                                    alert.showAndWait();
+                                }
+                        } else {
+                            Alert alert = new Alert(Alert.AlertType.ERROR);
+                                alert.setTitle("Erreur lors de la sauvegarde de la partie");
+                                alert.setHeaderText(null);
+                                alert.setContentText("Le nom de sauvegarde est vide");
+
+                                alert.showAndWait();
+                        }
+                    } else {
+                        controller.updateGame();
+                    }
+                } catch (DBException ex) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Erreur lors d'accès à la base de donnée");
+                        alert.setHeaderText(null);
+                        alert.setContentText(ex.getMessage());
+
+                        alert.showAndWait();
+                } catch (GooseGameException ex) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Erreur de logique");
+                        alert.setHeaderText(null);
+                        alert.setContentText(ex.getMessage());
+
+                        alert.showAndWait();
                 }
             }
         });
-        this.menuFile.getItems().addAll(newGame);
+        this.menuFile.getItems().addAll(this.saveGame);
         // On ajoute l'item "Quit" au menu "File"
         this.quit = new MenuItem("Quit");
         this.quit.setOnAction(new EventHandler<ActionEvent>() {
@@ -147,6 +257,8 @@ public class MainWindow extends Parent implements View {
                     } else {
                         event.consume();
                     }
+                } else {
+                    mainStage.close();
                 }
             }
         });
@@ -161,8 +273,6 @@ public class MainWindow extends Parent implements View {
             public void handle(ActionEvent t) {
                 // Action : demande la liste de joueurs qui joue à la partie
                 PlayerChoice playerChoice = new PlayerChoice(getObject(), controller);
-                // Désactive son MenuItem
-                //addPlayer.setDisable(true);
             }
         });
         this.menuGame.getItems().addAll(addPlayer);
@@ -178,6 +288,7 @@ public class MainWindow extends Parent implements View {
             }
         });
         this.menuGame.getItems().addAll(startGame);
+        this.menuGame.setDisable(true);
         
         // Menu File de la barre de menu
         this.menuHelp = new Menu("Help");
@@ -252,11 +363,15 @@ public class MainWindow extends Parent implements View {
         
         // Texte permettant d'afficher le résultat des dés
         this.dicesSumText = new Text("/");
-        this.dicesSumText.setFont(new Font(15));
+        this.dicesSumText.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
         
         // Texte permettant d'afficher le joueur suivant ou le gagnant
-        this.playerText = new Text("");
-        this.playerText.setFont(new Font(15));
+        this.playerText1 = new Text("");
+        this.playerText1.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
+        // Texte permettant d'afficher le joueur suivant ou le gagnant
+        this.playerText2 = new Text("");
+        this.playerText2.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
+        this.playerText2.setStroke(Color.BLACK);
         
         // Plateau du jeu
         this.board = new BoardView(controller);
@@ -279,8 +394,9 @@ public class MainWindow extends Parent implements View {
         this.gridpane.setPadding(new Insets(5, 5, 5, 5));
         this.gridpane.add(throwDicesButton, 0, 0);
         this.gridpane.add(dicesSumText, 1, 0);
-        this.gridpane.add(playerText, 2, 0);
-        this.gridpane.add(board, 0, 1, 3, 1);
+        this.gridpane.add(playerText1, 2, 0);
+        this.gridpane.add(playerText2, 3, 0);
+        this.gridpane.add(board, 0, 1, 4, 1);
 
         // Layout permettant de mettre en la barre de menu avec le reste des éléments
         this.borderpane = new BorderPane();
@@ -290,11 +406,11 @@ public class MainWindow extends Parent implements View {
         this.mainGroup.getChildren().add(borderpane);
         
         this.mainStage.show();
-        
-        // Affiche la fenêtre pour demander les joueurs 
-        PlayerChoice playerChoice = new PlayerChoice(this, controller);
     }
     
+    /**
+     *
+     */
     public void startGame() {
         try {
             controller.startGame(); // On débute la partie
@@ -308,10 +424,18 @@ public class MainWindow extends Parent implements View {
         }
     }
     
+    /**
+     *
+     * @return
+     */
     public Stage getStage() {
         return this.mainStage;
     }
     
+    /**
+     *
+     * @return
+     */
     public MainWindow getObject() {
         return this;
     }
@@ -334,12 +458,18 @@ public class MainWindow extends Parent implements View {
             this.dicesSumText.setText(Integer.toString(this.controller.getDicesSum()));
 
             // On affiche le joueur suivant
-            this.playerText.setText("Joueur suivant : "+this.controller.getCurrentPlayerColor());
+            Pair<String, Color> player = this.controller.getCurrentPlayer();
+            this.playerText1.setText("  Joueur suivant : ");
+            this.playerText2.setText(player.getKey());
+            this.playerText2.setFill(player.getValue());
 
         // Si le jeu est fini :
         } else if (this.controller.isGameOver()) {
             // On affiche le joueur gagnant
-            this.playerText.setText("Joueur gagnant : "+this.controller.getCurrentPlayerColor());
+            Pair<String, Color> player = this.controller.getCurrentPlayer();
+            this.playerText1.setText("  Joueur gagnant");
+            this.playerText2.setText(player.getKey());
+            this.playerText2.setFill(player.getValue());
             
             // On désactive le bouton de lancer de dé
             this.throwDicesButton.setDisable(true);

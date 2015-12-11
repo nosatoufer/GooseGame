@@ -31,8 +31,16 @@ public class BoardView extends Parent implements Serializable {
     private final Controller controller;
     
     // Boléen indiquant si un joueur vient de bouger, attribut du Beans
+
+    /**
+     *
+     */
     protected BooleanProperty playerMoved;
     
+    /**
+     *
+     * @param controller
+     */
     public BoardView(Controller controller) {
         // Liaison avec le controleur
         this.controller = controller;

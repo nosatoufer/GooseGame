@@ -16,8 +16,18 @@ import javafx.scene.shape.Rectangle;
  * @author Maxime
  */
 public class CustomRectangle extends Rectangle implements Serializable {
+
+    /**
+     *
+     */
     protected ObjectProperty<Color> color;
     
+    /**
+     *
+     * @param width
+     * @param height
+     * @param color
+     */
     public CustomRectangle(int width, int height, Color color) {
         super(width, height, color);
 

@@ -11,6 +11,10 @@ public class Dice {
     private final int m_maxValue;
     private final Random m_rand;
     
+    /**
+     *
+     * @param maxValue
+     */
     public Dice(int maxValue)
     {
         m_rand = new Random();

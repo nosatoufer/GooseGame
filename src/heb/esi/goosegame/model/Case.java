@@ -10,11 +10,18 @@ public class Case {
     private Player player;
     private CaseType type;
 
+    /**
+     *
+     */
     public Case() {
         this.player = null;
         this.type = CaseType.EMPTY;
     }
 
+    /**
+     *
+     * @param type
+     */
     public Case(CaseType type) {
         this.player = null;
         this.type = type;

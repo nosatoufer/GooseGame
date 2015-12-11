@@ -13,6 +13,9 @@ public class Board {
 
     private final Case board[] = new Case[64];
 
+    /**
+     *
+     */
     public Board(){
         for (int i = 0; i < 64; ++i) {
             this.board[i] = new Case();

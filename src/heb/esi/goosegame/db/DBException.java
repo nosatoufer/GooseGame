@@ -1,12 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package heb.esi.goosegame.db;
 
 /**
- * Exception lancée lors d'un probléme d'accès au gestionnaire de persistance
+ * Exception lancée lors d'un probléme avec la base de donnée
  * @author HONEY
  */
 public class DBException extends Exception{
@@ -16,7 +11,6 @@ public class DBException extends Exception{
      */
     public DBException() {
     }
-
 
     /**
      * Constructs an instance of <code>PenduDbException</code> with the specified detail message.

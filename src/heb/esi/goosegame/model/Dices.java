@@ -9,6 +9,11 @@ import java.util.List;
 public class Dices {
     private List<Dice> m_dices;
     
+    /**
+     *
+     * @param nDice
+     * @param mRoll
+     */
     public Dices(int nDice, int mRoll)
     {
         m_dices = new ArrayList<>();

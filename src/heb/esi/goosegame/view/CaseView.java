@@ -41,8 +41,18 @@ public class CaseView extends Parent implements Serializable {
     private final Text posText; // Label indiquant le numéro de la case
     private final ArrayList<CustomRectangle> players; // Element permettant d'afficher le joueur sur la case
 
+    /**
+     *
+     */
     protected BooleanProperty playerMoved;
 
+    /**
+     *
+     * @param controler
+     * @param pos
+     * @param x
+     * @param y
+     */
     public CaseView(Controller controler, int pos, int x, int y) {
         this.controler = controler;
 
@@ -117,6 +127,10 @@ public class CaseView extends Parent implements Serializable {
         });
     }
 
+    /**
+     *
+     * @param type
+     */
     public void setType(CaseType type) {
         this.caseTypeText.setText(type.desc());
     }
@@ -136,6 +150,10 @@ public class CaseView extends Parent implements Serializable {
         this.fond.setFill(Color.WHITE);
     }
     
+    /**
+     *
+     * @param color
+     */
     public void delete(Color color) {
         for (CustomRectangle player : this.players) {
             if (player.getColor().equals(color) && (!player.getColor().equals(Color.TRANSPARENT))) {
@@ -144,6 +162,11 @@ public class CaseView extends Parent implements Serializable {
         }
     }
     
+    /**
+     *
+     * @param color
+     * @return
+     */
     public boolean isPresent(Color color) {
         for (CustomRectangle rect : this.players) {
             if (rect.getColor().equals(color)) {
@@ -153,12 +176,19 @@ public class CaseView extends Parent implements Serializable {
         return false;
     }
     
+    /**
+     *
+     */
     public void deleteAll() {
         for (CustomRectangle rect : this.players) {
             rect.setColor(Color.TRANSPARENT);
         }
     }
     
+    /**
+     *
+     * @param color
+     */
     public void addPlayer(Color color) {
         if (!this.isPresent(color)) {
             for (CustomRectangle rect : this.players) {

@@ -1,8 +1,11 @@
 package heb.esi.goosegame.view;
 
 import heb.esi.goosegame.controler.Controller;
+import heb.esi.goosegame.db.DBException;
 import heb.esi.goosegame.model.GooseGameException;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -41,6 +44,11 @@ public class PlayerChoice extends Parent {
     Button closeButton;
     GridPane gridpane;
     
+    /**
+     *
+     * @param parent
+     * @param controler
+     */
     public PlayerChoice(MainWindow parent, Controller controler){
         this.controller = controler;
         
@@ -102,6 +110,13 @@ public class PlayerChoice extends Parent {
                         alert.setTitle("Erreur lors de l'ajout du joueur");
                         alert.setHeaderText(null);
                         alert.setContentText("Aucune couleur sélectionnée");
+
+                        alert.showAndWait();
+                } catch (DBException ex) {
+                    Alert alert = new Alert(AlertType.ERROR);
+                        alert.setTitle("Erreur lors de la sauvegarde dans la base de donnée");
+                        alert.setHeaderText(null);
+                        alert.setContentText(ex.getMessage());
 
                         alert.showAndWait();
                 }

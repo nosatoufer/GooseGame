@@ -5,9 +5,16 @@ package heb.esi.goosegame.model;
  */
 public class GooseGameException extends Exception {
 
+    /**
+     *
+     */
     public GooseGameException() {
     }
 
+    /**
+     *
+     * @param msg
+     */
     public GooseGameException(String msg) {
         super(msg);
     }
