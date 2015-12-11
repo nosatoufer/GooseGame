@@ -1,6 +1,0 @@
-Rapport de la modif
-
-
-J'ai ajouté un atrribur timePlayer dans la classe Player et dans la classe Game, j'ai ajouté une méthode 
-qui retourne le temps total éoulé.
-Je commencait à creer une classe TimerView
